@@ -1,0 +1,67 @@
+	/**
+	 *
+	 * @apiName UpdateOnOffScanScadaInfoManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/updateOnOffScanScadaInfoManager/ Update ON_SCAN 
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับอัพเดต ค่า ON_SCAN ใน STATION_DF
+	 *
+	 *
+	 *
+	 * @apiSampleRequest /AdminAPI/updateOnOffScanScadaInfoManager/
+	 *
+	 * @apiSuccess {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+	 * {
+	 *   "msg": "Hello, anusorn"
+	 * }
+	 *
+	 * @apiError UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+	 function updateOnOffScanScadaInfoManager($app, $pdo, $db) {
+		
+	 	/* ************************* */
+	 	/* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+	 	/* ************************* */
+
+
+	 	// Update ข้อมูล ON_SCAN จาก Fast/Tools
+		$scada_station_df_results = $db->tb_scada_station_df();
+		foreach ($scada_station_df_results as $scada_station_df_result) {
+
+			$i = 0;
+
+			// ค้นหาจากฐานข้อมูล (ตาราง "tb_main02_scada_rtu_info")
+			$main02_scada_rtu_info_result = $db->tb_main02_scada_rtu_info()->where("meter_code = ? ", $scada_station_df_result["meter_code"])->fetch();
+
+				if ($main02_scada_rtu_info_result !== false) {
+						 $str = $scada_station_df_result["on_scan"];
+						 $str = preg_replace('/(\v|\s)+/', ' ', $str);
+						 $str = trim($str);
+
+						 //$str = trim($text, " \t.");
+
+						$data = array(
+							"rtu_status" => $str
+						);
+
+						$result_updateScadaInfo = $main02_scada_rtu_info_result->update($data);
+
+				} else {
+
+				}
+
+			}
+
+	    $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+	    echo json_encode($return_m);
+
+	}

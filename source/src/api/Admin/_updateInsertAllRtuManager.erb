@@ -1,0 +1,137 @@
+	/**
+	 *
+	 * @apiName UpdateInsertAllRtuManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/updateInsertAllRtuManager/ Update/Insert All RTU 
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับรวบรวมข้อมูล RTU ทั้งหมด จากทั้งผู้ใช้งาน, scada และ wlma
+	 *
+	 *
+	 *
+	 * @apiSampleRequest /AdminAPI/updateInsertAllRtuManager/
+	 *
+	 * @apiSuccess {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+	 * {
+	 *   "msg": "Hello, anusorn"
+	 * }
+	 *
+	 * @apiError UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+	 function updateInsertAllRtuManager($app, $pdo, $db) {
+
+	 	/* ************************* */
+	 	/* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+	 	/* ************************* */
+	 	
+
+	 	// Clear ข้อมูลเดิม (Empty the table - TRUNCATE)
+	 	$truncate_result = $pdo->query("TRUNCATE TABLE `tb_main04_all_rtu_info`")->fetch();
+
+
+	 	// Update ข้อมูลจากผู้ใช้งาน (ฝทส.)
+		$main01_user_rtu_info_results = $db->tb_main01_user_rtu_info();
+		foreach ($main01_user_rtu_info_results as $main01_user_rtu_info_result) {
+
+			$tmpMeterCode = $main01_user_rtu_info_result["meter_code"];
+			$tmpUserLoggerCode = $main01_user_rtu_info_result["logger_code"];
+			$tmpUserIpAddress  = $main01_user_rtu_info_result["ip_address"];
+			$tmpUserRtuStatus  = $main01_user_rtu_info_result["rtu_status"];
+
+			$query_result = $db->tb_main04_all_rtu_info()->insert_update(
+						    array("meter_code" => $tmpMeterCode), // unique key
+						    array("user_logger_code" => $tmpUserLoggerCode, 
+						    	  "user_ip_address"  => $tmpUserIpAddress, 
+						    	  "user_rtu_status"  => $tmpUserRtuStatus), // insert values if the row doesn't exist
+						    array("user_logger_code" => $tmpUserLoggerCode, 
+						    	  "user_ip_address"  => $tmpUserIpAddress, 
+						    	  "user_rtu_status"  => $tmpUserRtuStatus) // update values otherwise
+						    );
+
+		}
+
+		// Update ข้อมูลจาก scada
+		$main02_scada_rtu_info_results = $db->tb_main02_scada_rtu_info();
+		foreach ($main02_scada_rtu_info_results as $main02_scada_rtu_info_result) {
+
+			$tmpMeterCode = $main02_scada_rtu_info_result["meter_code"];
+			$tmpUserLoggerCode = $main02_scada_rtu_info_result["logger_code"];
+			$tmpUserIpAddress  = $main02_scada_rtu_info_result["ip_address"];
+			$tmpUserRtuStatus  = $main02_scada_rtu_info_result["rtu_status"];
+
+			$query_result = $db->tb_main04_all_rtu_info()->insert_update(
+						    array("meter_code" => $tmpMeterCode), // unique key
+						    array("scada_logger_code" => $tmpUserLoggerCode, 
+						    	  "scada_ip_address"  => $tmpUserIpAddress, 
+						    	  "scada_rtu_status"  => $tmpUserRtuStatus), // insert values if the row doesn't exist
+						    array("scada_logger_code" => $tmpUserLoggerCode, 
+						    	  "scada_ip_address"  => $tmpUserIpAddress, 
+						    	  "scada_rtu_status"  => $tmpUserRtuStatus) // update values otherwise
+						    );
+		}
+
+		// Update ข้อมูลจาก wlma
+		$main03_wlma_rtu_info_results = $db->tb_main03_wlma_rtu_info();
+		foreach ($main03_wlma_rtu_info_results as $main03_wlma_rtu_info_result) {
+
+			$tmpMeterCode = $main03_wlma_rtu_info_result["meter_code"];
+			$tmpUserLoggerCode = $main03_wlma_rtu_info_result["logger_code"];
+			$tmpUserIpAddress  = $main03_wlma_rtu_info_result["ip_address"];
+			$tmpUserRtuStatus  = $main03_wlma_rtu_info_result["rtu_status"];
+
+			$query_result = $db->tb_main04_all_rtu_info()->insert_update(
+						    array("meter_code" => $tmpMeterCode), // unique key
+						    array("wlma_logger_code" => $tmpUserLoggerCode, 
+						    	  "wlma_ip_address"  => $tmpUserIpAddress, 
+						    	  "wlma_rtu_status"  => $tmpUserRtuStatus), // insert values if the row doesn't exist
+						    array("wlma_logger_code" => $tmpUserLoggerCode, 
+						    	  "wlma_ip_address"  => $tmpUserIpAddress, 
+						    	  "wlma_rtu_status"  => $tmpUserRtuStatus) // update values otherwise
+						    );
+
+		}
+
+		// แสดงรายการข้อมูลทั้งหมดจากฐานข้อมูลรวม tb_main04_all_rtu_info
+		$reports = array();
+		$main04_all_rtu_info_results = $db->tb_main04_all_rtu_info();
+		foreach ($main04_all_rtu_info_results as $main04_all_rtu_info_result) {
+
+			$reports[] = array(
+				"meterCode" => $main04_all_rtu_info_result["meter_code"],
+				"userLoggerCode" => $main04_all_rtu_info_result["user_logger_code"],
+				"userIpAddress" => $main04_all_rtu_info_result["user_ip_address"],
+				"userRtuStatus" => $main04_all_rtu_info_result["user_rtu_status"],
+				"scadaLoggerCode" => $main04_all_rtu_info_result["scada_logger_code"],
+				"scadaIpAddress" => $main04_all_rtu_info_result["scada_ip_address"],
+				"scadaRtuStatus" => $main04_all_rtu_info_result["scada_rtu_status"],
+				"wlmaLoggerCode" => $main04_all_rtu_info_result["wlma_logger_code"],
+				"wlmaIpAddress" => $main04_all_rtu_info_result["wlma_ip_address"],
+				"wlmaRtuStatus" => $main04_all_rtu_info_result["wlma_rtu_status"]
+				);
+
+		}
+
+		$rowCount = count($main04_all_rtu_info_results);
+
+	    /* ************************* */
+	    /* เริ่มกระบวนการส่งค่ากลับ */
+	    /* ************************* */
+	    $resultText = "success";
+
+	    $reportResult = array("result" =>  $resultText, "count"=>$rowCount, "rows" => $reports);
+
+	    $app->response()->header("Content-Type", "application/json");
+	    echo json_encode($reportResult);
+
+	    // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+	    // echo json_encode($return_m);
+
+	}

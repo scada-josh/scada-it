@@ -1,0 +1,96 @@
+		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_SECTION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'SECTION_DF');
+		$objPHPExcel->addSheet($objPHPExcel_SECTION_DF_Worksheet, $sheetCount);
+		$objPHPExcel_SECTION_DF_Worksheet->setTitle('SECTION_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_section_df = $db->section_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_section_df = $pdo->prepare("SELECT * FROM section_df WHERE templates = 'header_template'");
+		$sth_section_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_section_df = $sth_section_df->columnCount();
+		$startRow_section_df = 2;
+		$startColumn_section_df = 4;
+
+		for ($i = $startColumn_section_df; $i < $numCols_section_df; $i++) {
+			$meta = $sth_section_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_section_df;
+			$tmpValue = $results_header_section_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_section_df; $j < $numDM+$startRow_section_df; $j++) { 
+
+			$results_data_section_dfs = $db->section_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_section_dfs as $results_data_section_df) {
+
+					$z = $z +1;
+					for ($i = $startColumn_section_df; $i < $numCols_section_df; $i ++) {
+						$meta = $sth_section_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_section_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "SECTION_NAME") {
+							$value = $paramListDM[$j-$startRow_section_df]->name;
+						} else if($meta['name'] == "NAME"){
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208
+								$tmpDM_Name = $paramListDM[$j-$startRow_section_df]->name;
+								$value = "PRODUCTION.WTDC.".$tmpDM_Name;
+							} else {
+								// SERVICE.B54.DM-54-04-05-01
+								$tmpDM_Name = $paramListDM[$j-$startRow_section_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name;
+							}
+
+						} else if($meta['name'] == "DESCRIPTION"){
+							
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_section_df[$meta['name']];
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_section_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $tmpBranch_Name;
+							}
+
+						} else {
+							$tmpValue = $results_data_section_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+
+			}
+
+		}
+
+
+

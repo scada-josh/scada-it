@@ -1,0 +1,40 @@
+---
+title: SCADA Administrator
+layout: "layout-scada"
+---
+
+
+<%= partial "_navigationBar" %>
+
+    <!-- Page Content -->
+    <div class="container" ng-controller="MyController">
+
+        <div class="row">
+
+            <!-- Blog Sidebar Widgets Column -->
+            <div class="col-md-4" >
+
+                <!-- Form Search Partial -->
+                <%= partial "_formSearch" %>
+
+                <!-- List Card Partial -->
+                <%= partial "_listCard" %>
+
+            </div>
+
+
+            <!-- Blog Post Content Column -->
+            <div class="col-lg-8">
+
+                <!-- List Card Partial -->
+                <%= partial "_panelImageEditing" %>
+
+            </div>
+
+
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+

@@ -1,0 +1,43 @@
+<p class="lead">Search Result</p>
+<h6>ผลการค้นหาเจอทั้งหมด {{results.length}} รายการ</h6>
+
+<div class="list-group" id="listCards">
+	<!-- <a href="#" class="list-group-item active" ng-repeat="cardInfo in dataSetListCard">
+		<h4 class="list-group-item-heading">{{cardInfo.userID}}</h4><span class="badge">Approved</span>
+		<p class="list-group-item-text">นางสาวกานต์สินี ปิติวีรารัตน์</p>
+		<p class="list-group-item-text">สายงานผู้ว่าการฯ</p>
+        </a> -->
+
+        <a href="#" class="list-group-item" ng-repeat="cardInfo in dataSetListCard.rows | filter : searchText as results">
+                <h4 class="list-group-item-heading text-primary" >{{cardInfo.meterCode}}</h4>
+                <!-- <span class="badge">{{cardInfo.cardApproved ? 'Approved' : 'New'}}</span> -->
+                <!-- <p class="list-group-item-text"><small><abbr title="ลำดับที่">No.</abbr> {{cardInfo.userOrder}}</small></p> -->
+
+                <!-- <p class="list-group-item-text">{{cardInfo.userLoggerCode}}</p>
+                <p class="list-group-item-text">{{cardInfo.userIpAddress}}</p>
+                <p class="list-group-item-text">{{cardInfo.scadaLoggerCode}}</p>
+                <p class="list-group-item-text">{{cardInfo.scadaIpAddress}}</p>
+                <p class="list-group-item-text">{{cardInfo.wlmaLoggerCode}}</p>
+                <p class="list-group-item-text">{{cardInfo.wlmaIpAddress}}</p> -->
+                <ul class="list-group">
+                        <li class="list-group-item list-group-item-success">
+                                <span class="badge">{{cardInfo.userRtuStatus ? 'Active' : 'Active'}}</span>
+                                <!-- <p class="list-group-item-text">ฝทส.</p> -->
+                                <small class="list-group-item-text">{{cardInfo.userLoggerCode}} - {{cardInfo.userIpAddress}}</small>
+                        </li>
+                        <li class="list-group-item list-group-item-info">
+                                <span class="badge">{{(cardInfo.userRtuStatus == 1) ? 'Onscan' : cardInfo.userRtuStatus}}</span>
+                                <!-- <p class="list-group-item-text">SCADA</p> -->
+                                <small class="list-group-item-text">{{cardInfo.scadaLoggerCode}} - {{cardInfo.scadaIpAddress}}</small>
+                        </li>
+                        <li class="list-group-item list-group-item-warning">
+                                <span class="badge">{{cardInfo.userRtuStatus ? 'Active' : 'Active'}}</span>
+                                <!-- <p class="list-group-item-text">WLMA</p> -->
+                                <small class="list-group-item-text">{{cardInfo.wlmaLoggerCode}} - {{cardInfo.wlmaIpAddress}}</small>
+                        </li>
+                </ul>
+        </a>
+</div>
+
+<hr/>
+<p class="text-center">Copyright &copy; SCADA-IT MWA 2015</p>

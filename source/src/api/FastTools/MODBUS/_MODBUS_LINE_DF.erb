@@ -1,0 +1,79 @@
+
+
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_modbus_line_df = $db->modbus_line_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_modbus_line_df = $pdo->prepare("SELECT * FROM modbus_line_df WHERE templates = 'header_template'");
+		$sth_modbus_line_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_modbus_line_df = $sth_modbus_line_df->columnCount();
+		$startRow_modbus_line_df = 2;
+		$startColumn_modbus_line_df = 4;
+
+		for ($i = $startColumn_modbus_line_df; $i < $numCols_modbus_line_df; $i++) {
+			$meta = $sth_modbus_line_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_modbus_line_df;
+			$tmpValue = $results_header_modbus_line_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_modbus_line_df; $j < $numDM+$startRow_modbus_line_df; $j++) { 
+
+			$results_data_modbus_line_dfs = $db->modbus_line_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_modbus_line_dfs as $results_data_modbus_line_df) {
+					$z = $z +1;
+					for ($i = $startColumn_modbus_line_df; $i < $numCols_modbus_line_df; $i ++) {
+						$meta = $sth_modbus_line_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_modbus_line_df;	// คอลัมภ์ที่ $col ของ Excel
+
+						if ($meta['name'] == "NAME") {
+							//B01MDC_01
+							$tmpDM_Name = $paramListDM[$j-$startRow_modbus_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+							$value = "B".$tmpBranchCode."MDC_".$tmpZoneCode;
+						} else if($meta['name'] == "DESCRIPTION"){
+							//Modbus Communication for B01 Zone 01
+							$tmpDM_Name = $paramListDM[$j-$startRow_modbus_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+							$value = "Modbus Communication for B".$tmpBranchCode." Zone ".$tmpZoneCode;
+						} else if($meta['name'] == "EQUIPMENT_MAN"){
+							//EQPM_B01_01
+							$tmpDM_Name = $paramListDM[$j-$startRow_modbus_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+							$value = "EQPM_B".$tmpBranchCode."_".$tmpZoneCode;
+						} else {
+							$tmpValue = $results_data_modbus_line_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+		/* Set Title */
+		// Rename worksheet
+		$objPHPExcel->getActiveSheet()->setTitle('MODBUS_LINE_DF');
+
+		

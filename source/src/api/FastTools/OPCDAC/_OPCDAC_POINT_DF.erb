@@ -1,0 +1,161 @@
+		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_OPCDAC_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'OPCDAC_POINT_DF');
+		$objPHPExcel->addSheet($objPHPExcel_OPCDAC_POINT_DF_Worksheet, $sheetCount);
+		$objPHPExcel_OPCDAC_POINT_DF_Worksheet->setTitle('OPCDAC_POINT_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Quickload for MODBUS (MODBUS_STATION_DF) */
+        /* ************************* */
+
+		/* Create Header */
+		//$reports = $db->modbus_station_df[1];
+		//$results_header = $db->opcdac_station_df()->where("templates = ?", "header_template")->fetch();
+		$results_header_opcdac_point_df = $db->opcdac_point_df()->where("templates = ?", "header_template")->fetch();
+
+        $sth_opcdac_point_df = $pdo->prepare("SELECT * FROM opcdac_point_df WHERE templates = 'header_template'");
+        $sth_opcdac_point_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_opcdac_point_df = $sth_opcdac_point_df->columnCount();
+		$startRow_opcdac_point_df = 2;
+		$startColumn_opcdac_point_df = 4;
+
+		for ($i = $startColumn_opcdac_point_df; $i < $numCols_opcdac_point_df; $i ++) {
+			$meta = $sth_opcdac_point_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_opcdac_point_df;
+			$tmpValue = $results_header_opcdac_point_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_opcdac_point_df; $j < $numDM+$startRow_opcdac_point_df; $j++) { 
+
+			$results_data_opcdac_point_dfs = $db->opcdac_point_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_opcdac_point_dfs as $results_data_opcdac_point_df) {
+					$z = $z +1;
+					for ($i = $startColumn_opcdac_point_df; $i < $numCols_opcdac_point_df; $i ++) {
+						$meta = $sth_opcdac_point_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_opcdac_point_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						 if ($meta['name'] == "STATION") {
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+								$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+								$value = "B".$tmpBranchCode."_PGIM";
+							} else if($paramFastToolsDestination == "DCXII") {
+								$value = "DCXII";
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								$value = "WTDC_PGIM";
+							} else {
+								$value = "N/A";
+							}
+
+						 } else if ($meta['name'] == "DESCRIPTION") {
+
+								$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+								$value = "";
+
+						 } else if ($meta['name'] == "OPC_GROUP") {
+
+								$value = $tmpDM_Name;
+							
+						 } else if ($meta['name'] == "POINT") {
+
+						 	$tmpOriginal = $results_data_opcdac_point_df[$meta['name']];
+							$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								$value = str_replace("DM-02-15-01-01", $tmpDM_Name, $tmpOriginal);
+							} else if($paramFastToolsDestination == "DCXII") {
+								$value = str_replace("DM-02-02-08-01", $tmpDM_Name, $tmpOriginal);
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								$value = str_replace("U208", $tmpDM_Name, $tmpOriginal);
+							} else {
+								$value = "N/A";
+							}
+
+						 } else if ($meta['name'] == "NAME") {
+
+						 	$tmpOriginal = $results_data_opcdac_point_df[$meta['name']];
+							$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								$value = "B".$tmpBranchCode."_PGIM:".str_replace("B02_PGIM:DM-02-15-01-01", $tmpDM_Name, $tmpOriginal);
+							} else if($paramFastToolsDestination == "DCXII") {
+								$value = str_replace("DM-02-02-08-01", $tmpDM_Name, $tmpOriginal);
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								$value = str_replace("U208", $tmpDM_Name, $tmpOriginal);
+							} else {
+								$value = "N/A";
+							}
+
+						 } else if ($meta['name'] == "OPC_TAG") {
+
+						 	$tmpOriginal = $results_data_opcdac_point_df[$meta['name']];
+							$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								//WL-WLMS-102\DCXII\DM-02-15-01-01-F1
+								if (substr($tmpBranchCode,0,1)=="0") {
+									$tmp1 = "WL-WLMS-1".$tmpBranchCode;
+									$tmp2 = str_replace("DM-02-02-08-01", $tmpDM_Name, $tmpOriginal);
+									$value = str_replace("WL-WLMS-102", $tmp1, $tmp2);
+								} else {
+									$tmp1 = "WL-WLMS-".$tmpBranchCode;
+									$tmp2 = str_replace("DM-02-02-08-01", $tmpDM_Name, $tmpOriginal);
+									$value = str_replace("WL-WLMS-102", $tmp1, $tmp2);
+								}
+							} else if($paramFastToolsDestination == "DCXII") {
+								//B02_02.DM-02-02-08-01.Flow
+								$tmpReplaceBrancZone = str_replace("B02_02", "B".$tmpBranchCode."_".$tmpZoneCode, $tmpOriginal);
+								$tmpReplaceDM = str_replace("DM-02-02-08-01", $tmpDM_Name, $tmpReplaceBrancZone);
+								$value = $tmpReplaceDM;
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								//DC-SCADA-PGSCAN\OPCScanner_1\Applications.Application_1.Program2.FU208
+								$value = str_replace("U208", $tmpDM_Name, $tmpOriginal);
+							} else {
+								$value = "N/A";
+							}
+
+						 } else {
+							$value = $results_data_opcdac_point_df[$meta['name']];
+						 }
+
+						 //$value = $results_data_opcdac_point_df[$meta['name']];
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+
+
+
+

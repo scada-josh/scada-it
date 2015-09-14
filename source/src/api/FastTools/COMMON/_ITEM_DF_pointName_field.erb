@@ -1,0 +1,61 @@
+							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
+								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
+								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
+								if ($results_data_item_df['TAG'] == "COMM_STS"){
+									$value = ":";
+								} else {
+									$value = $tmpDM_Name.":".$results_data_item_df['TAG'];
+								}
+							} else if (($paramFastToolsDestination == "MOXA") || ($paramFastToolsDestination == "WAGO")) {
+								// Define STATION for MOXA, Template from "DM-01-06-03-02"
+								// Define STATION for WAGO, Template from "DM-02-08-02-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+																		   || ($results_data_item_df['TAG'] == "PT_EXT") 
+																		   || ($results_data_item_df['TAG'] == "PT_INT") 
+																		   || ($results_data_item_df['TAG'] == "TOTAL")){
+									$value = $tmpDM_Name.":".$results_data_item_df['TAG'];
+								} else {
+									$value = $results_data_item_df[$meta['name']];
+								}
+							} else if ($paramFastToolsDestination == "ABB AC500") {
+								// Define STATION for ABB AC500, Template from "DM-01-06-01-01"
+								if (($results_data_item_df['TAG'] == "COMM_STS") || ($results_data_item_df['TAG'] == "PT_EXT_HI_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_HI_SP") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_SP")){
+										$value = ":";
+								} else {
+									$value = $tmpDM_Name.":".$results_data_item_df['TAG'];
+								}
+							} else if ($paramFastToolsDestination == "PGIM_BRANCH") {
+								// Define STATION for PGIM_BRANCH, Template from "DM-02-15-01-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "ON") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+									$value = "B".$tmpBranch_Name."_PGIM".":".$tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = ":";
+								}
+							} else if ($paramFastToolsDestination == "DCXII") {
+								// Define STATION for DCXII, Template from "DM-02-02-08-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+										$value = "DCXII:".$tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "N/A";
+								}
+							} else if ($paramFastToolsDestination == "PGIM_WTDC") {
+								// Define STATION for PGIM_WTDC, Template from "U208"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "PT")){
+										$value = "WTDC_PGIM:".$tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "N/A";
+								}
+							}

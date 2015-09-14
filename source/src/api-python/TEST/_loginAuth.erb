@@ -1,0 +1,42 @@
+"""
+@api {get} /login_auth Test Login Auth
+@apiName login_auth
+@apiGroup TEST
+@apiSampleRequest /login_auth
+"""
+class loginAuth(Resource):
+    decorators = [auth.login_required]
+    def get(self):
+        return {'hello': 'world (GET)'}
+        
+    def post(self):
+        # json_data = request.get_json(force=True)
+        # un = json_data['username']
+        # pw = json_data['password']
+
+        # parser = reqparse.RequestParser()
+        # parser.add_argument('username', type=str)
+        # parser.add_argument('password', type=str)
+        # args = parser.parse_args()
+        # un = str(args['username'])
+        # pw = str(args['password'])
+        # return jsonify(u=un, p=pw)
+
+        if request.headers['Content-Type'] == 'text/plain':
+            return "Text Message: " + request.data
+        elif request.headers['Content-Type'] == 'application/json':
+            # return "JSON Message: " + json.dumps(request.json)
+            json_data = request.get_json(force=True)
+            un = json_data['username']
+            pw = json_data['password']
+            return jsonify(u=un, p=pw)
+        elif request.headers['Content-Type'] == 'application/x-www-form-urlencoded':
+            parser = reqparse.RequestParser()
+            parser.add_argument('username', type=str)
+            parser.add_argument('password', type=str)
+            args = parser.parse_args()
+            un = str(args['username'])
+            pw = str(args['password'])
+            return jsonify(u=un, p=pw)
+        else:
+            return "415 Unsupported Media Type ;)"

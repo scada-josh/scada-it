@@ -1,0 +1,78 @@
+---
+title: SCADA IT - API
+layout: "layout-blank"
+---
+
+<?php
+
+	require_once '../../packages/autoload.php';
+
+    $dsn = "mysql:dbname=scada_it_database;host=localhost;charset=UTF8";
+    $username = "root";
+    $password = "";
+    $pdo = new PDO($dsn, $username, $password);
+    $db = new NotORM($pdo);
+
+    /* Slim framework */
+    $app = new \Slim\Slim();
+
+
+
+    /* PHP Excel : Create new PHPExcel object : http://phpexcel.codeplex.com */
+    $objPHPExcel = new \PHPExcel();
+
+
+
+    /* PHP Function */
+    <%= partial "/Functions/_phpFunction" %>
+
+    /* TEST */
+  	<%= partial "/TEST/_apiTestGetService" %>
+    <%= partial "/TEST/_apiTestPostService" %>
+
+
+    /* Fast/Tools Configuration manager */
+    $app->post('/FastToolsAPI/MODBUS_Manager/',function() use ($app, $pdo, $db, $objPHPExcel) { 
+        MODBUS_Manager($app, $pdo, $db, $objPHPExcel); 
+    });
+    $app->post('/FastToolsAPI/OPCDAC_Manager/',function() use ($app, $pdo, $db, $objPHPExcel) { 
+        OPCDAC_Manager($app, $pdo, $db, $objPHPExcel); 
+    });
+
+
+
+
+
+    /* Admin manager */
+    $app->post('/AdminAPI/updateScadaInfoIpFromHostManager/',function() use ($app, $pdo, $db) { 
+        updateScadaInfoIpFromHostManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/updateCommentHostFileManager/',function() use ($app, $pdo, $db) { 
+        updateCommentHostFileManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/updateInsertAllRtuManager/',function() use ($app, $pdo, $db) { 
+        updateInsertAllRtuManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/updateOnOffScanScadaInfoManager/',function() use ($app, $pdo, $db) { 
+        updateOnOffScanScadaInfoManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/compareWithExistingRtuManager/',function() use ($app, $pdo, $db) { 
+        compareWithExistingRtuManager($app, $pdo, $db); 
+    });
+
+
+	$app->run();
+
+    /* Fast/Tools Configuration manager Partial */
+    <%= partial "/FastTools/_MODBUS_Manager" %>
+    <%= partial "/FastTools/_OPCDAC_Manager" %>
+    
+
+    /* Admin manager Partial */
+    <%= partial "/Admin/_updateScadaInfoIpFromHostManager" %>
+    <%= partial "/Admin/_updateCommentHostFileManager" %>
+    <%= partial "/Admin/_updateInsertAllRtuManager" %>
+    <%= partial "/Admin/_updateOnOffScanScadaInfoManager" %>
+    <%= partial "/Admin/_compareWithExistingRtuManager" %>
+
+?>

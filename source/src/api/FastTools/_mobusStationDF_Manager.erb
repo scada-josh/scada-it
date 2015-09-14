@@ -1,0 +1,177 @@
+
+	/**
+	 *
+	 * @apiName MODBUS_STATION_DF
+	 * @apiGroup Fast_Tools
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /FastToolsAPI/mobusStationDF_Manager/ MODBUS_STATION_DF
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับสร้าง MODBUS_STATION_DF 
+	 *
+	 *
+	 *
+	 * @apiParam {String} rtu_install = "SERVICE" คำอธิบายกลุ่มของอุปกรณ์ เช่น SERVICE, PRODUCTION, OTHER
+	 * @apiParam {String} rtu_modbus_brand = "MOXA" คำอธิบายชนิดของอุปกรณ์ เช่น MOXA, B&R X20, ABB AC500, YOKOGAWA FCJ, WAGO, SIXNET
+     * @apiParam {Object[]} listDM  รายการ DM
+     * @apiParam {String} listDM.name = "DM-01-01-01-01" ชื่อ DM
+     *
+     * @apiParamExample {json} Request-Example (ตัวอย่าง Payload, Content-Type: application/json):
+     *  {
+     *      "rtu_install": "SERVICE",
+     *      "rtu_modbus_brand": "MOXA",
+     *      "listDM": [
+     *          {
+     *              "name": "DM-01-01-01-01"
+     *          },
+     *          {
+     *              "name": "DM-01-01-01-02"
+     *          },
+     *          {
+     *              "name": "DM-01-01-01-03"
+     *          }
+     *      ]
+     *  }
+     *
+	 * @apiSampleRequest /FastToolsAPI/mobusStationDF_Manager/
+	 *
+	 * @apiSuccess (คำอธิบายผลลัพธ์ (กรณีส่งค่ากลับสำเร็จ Success 200)) {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+     * {
+     *     "result": "success",
+     *     "rows": [
+     *         {
+     *             "usercode": "judge-0001",
+     *             "prefix": "นาย",
+     *             "username": "วรศักดิ์",
+     *             "lastname": "ฉัตรแก้ว",
+     *             "position": "ผู้เชี่ยวชาญการประปานครหลวงระดับ ๑๐"
+     *         }
+     *     ]
+     * }
+	 *
+	 * @apiError (คำอธิบายผลลัพธ์ (กรณีเกิด Error 4xx)) UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+    function mobusStationDF_Manager($app, $pdo, $db, $objPHPExcel) {
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+	        $request = $app->request();
+	        $result = json_decode($request->getBody());
+
+	        /* receive request */
+	        $paramRtuInstall = $result->rtu_install;
+	        $paramRtuModbusBrand = $result->rtu_modbus_brand;
+	        $paramListDM = $result->listDM;
+
+ 
+		} else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+		    //$userID = $app->request()->params('userID_param');
+		    //$userID = $app->request()->post('userID_param');
+		}
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+        /* ************************* */
+
+        $reports = array();
+		
+		
+		/*  MODBUS_LINE_DF Partial */
+	    <%= partial "/FastTools/MODBUS/_MODBUS_LINE_DF" %>
+
+	    /*  MODBUS_STATION_DF Partial */
+	    <%= partial "/FastTools/MODBUS/_MODBUS_STATION_DF" %>
+
+	    /*  MODBUS_POINT_DF Partial */
+	    <%= partial "/FastTools/MODBUS/_MODBUS_POINT_DF" %>
+
+	    /*  STATION_DF Partial */
+	    <%= partial "/FastTools/COMMON/_SECTION_DF" %>
+
+	    /*  ITEM_DF Partial */
+	    <%= partial "/FastTools/COMMON/_ITEM_DF" %>
+
+	    /*  OBJECT_DF Partial */
+	    <%= partial "/FastTools/COMMON/_OBJECT_DF" %>
+
+	    /*  ITEM_HIS_DF Partial */
+	    <%= partial "/FastTools/COMMON/_ITEM_HIS_DF" %>
+
+
+
+
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Excel file */
+        /* ************************* */
+
+		// Set document properties
+		$objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
+									 ->setLastModifiedBy("Maarten Balliauw")
+									 ->setTitle("Office 2007 XLSX Test Document")
+									 ->setSubject("Office 2007 XLSX Test Document")
+									 ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+									 ->setKeywords("office 2007 openxml php")
+									 ->setCategory("Test result file");
+
+
+		// Redirect output to a client’s web browser (Excel5)
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="01simple.xls"');
+		header('Cache-Control: max-age=0');
+		// If you're serving to IE 9, then the following may be needed
+		header('Cache-Control: max-age=1');
+
+		// If you're serving to IE over SSL, then the following may be needed
+		header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+		header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+		header ('Pragma: public'); // HTTP/1.0
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$date = new DateTime();
+		$fileName = 'Quickload_for_MODBUS('.$paramRtuModbusBrand.')'.'_'.date("Y-m-d").'_'.$date->getTimestamp().'.xls';
+		$filePath = '../../files/'.$fileName;
+		$objWriter->save($filePath);
+
+
+
+	    /* ************************* */
+	    /* เริ่มกระบวนการส่งค่ากลับ */
+	    /* ************************* */
+	    $reports[] = array(
+	    		"filename" => $fileName,
+	    		"path" => url()."/scada-it/build/files/".$fileName
+	    	);
+
+
+	    $resultText = "success";
+
+	    $reportResult = array("result" =>  $resultText, "rows" => $reports);
+	    //$reportResult = array("result" =>  $resultText);
+
+	    $app->response()->header("Content-Type", "application/json");
+	    echo json_encode($reportResult);
+
+
+    }

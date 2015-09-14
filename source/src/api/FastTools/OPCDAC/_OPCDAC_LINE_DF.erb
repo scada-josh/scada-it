@@ -1,0 +1,97 @@
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_opcdac_line_df = $db->opcdac_line_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_opcdac_line_df = $pdo->prepare("SELECT * FROM opcdac_line_df WHERE templates = 'header_template'");
+		$sth_opcdac_line_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_opcdac_line_df = $sth_opcdac_line_df->columnCount();
+		$startRow_opcdac_line_df = 2;
+		$startColumn_opcdac_line_df = 4;
+
+		for ($i = $startColumn_opcdac_line_df; $i < $numCols_opcdac_line_df; $i++) {
+			$meta = $sth_opcdac_line_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_opcdac_line_df;
+			$value = $results_header_opcdac_line_df[$meta['name']];
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_opcdac_line_df; $j < $numDM+$startRow_opcdac_line_df; $j++) { 
+
+			$results_data_opcdac_line_dfs = $db->opcdac_line_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_opcdac_line_dfs as $results_data_opcdac_line_df) {
+					$z = $z +1;
+					for ($i = $startColumn_opcdac_line_df; $i < $numCols_opcdac_line_df; $i ++) {
+						$meta = $sth_opcdac_line_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_opcdac_line_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "NAME") {
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+								$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+								$value = "B".$tmpBranchCode."OPC";
+							} else if($paramFastToolsDestination == "DCXII") {
+								$value = "DCX";
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								$value = "WTDC_OPC";
+							} else {
+								$value = "N/A";
+							}
+							
+						} else if($meta['name'] == "DESCRIPTION") {
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+								$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+								$value = "B".$tmpBranchCode." PGIM Interface";
+							} else if($paramFastToolsDestination == "DCXII") {
+								$value = "DCX Localhost Interface";
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								$value = "WTDC PGIM Interface";
+							} else {
+								$value = "N/A";
+							}
+
+						} else if($meta['name'] == "EQUIPMENT_MAN") {
+
+							if($paramFastToolsDestination == "PGIM_BRANCH") {
+								$tmpDM_Name = $paramListDM[$j-$startRow_opcdac_line_df]->name;
+								$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+								$value = "OPXDAC_B".$tmpBranchCode;
+							} else if($paramFastToolsDestination == "DCXII") {
+								$value = "OPXDAC_DCX";
+							} else if($paramFastToolsDestination == "PGIM_WTDC") {
+								$value = "OPXDAC_WTDC";
+							} else {
+								$value = "N/A";
+							}
+
+						} else {
+							$value = $results_data_opcdac_line_df[$meta['name']];
+						}
+						
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+		/* Set Title */
+		// Rename worksheet
+		$objPHPExcel->getActiveSheet()->setTitle('OPCDAC_LINE_DF');

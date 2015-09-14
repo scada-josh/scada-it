@@ -1,0 +1,80 @@
+		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_MODBUS_STATION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'MODBUS_STATION_DF');
+		$objPHPExcel->addSheet($objPHPExcel_MODBUS_STATION_DF_Worksheet, $sheetCount);
+		$objPHPExcel_MODBUS_STATION_DF_Worksheet->setTitle('MODBUS_STATION_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Quickload for MODBUS (MODBUS_STATION_DF) */
+        /* ************************* */
+
+		/* Create Header */
+		//$reports = $db->modbus_station_df[1];
+		$results_header = $db->modbus_station_df()->where("templates = ?", "header_template")->fetch();
+
+        $sth = $pdo->prepare("SELECT * FROM modbus_station_df WHERE templates = 'header_template'");
+        $sth->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols = $sth->columnCount();
+		$startRow = 2;
+		$startColumn = 4;
+
+		for ($i = $startColumn; $i < $numCols; $i ++) {
+			$meta = $sth->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn;
+			$value = $results_header[$meta['name']];
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$results_data = $db->modbus_station_df()->where("templates = ? and rtu_install = ?", "data_template", $paramRtuInstall)->fetch();
+		for ($j=$startRow; $j < $numDM+$startRow; $j++) { 
+
+			for ($i = $startColumn; $i < $numCols; $i ++) {
+				$meta = $sth->getColumnMeta($i);
+				$row = $j;		// แถวที่ $row ของ Excel
+				$col = $i-$startColumn;	// คอลัมภ์ที่ $col ของ Excel
+
+				if ($meta['name'] == "NAME") {
+					$value = $paramListDM[$j-$startRow]->name;
+				} else if($meta['name'] == "DESCRIPTION") {
+					$value = $paramFastToolsDestination;
+				} else if($meta['name'] == "LINE") {
+					$tmpDM_Name = $paramListDM[$j-$startRow]->name;  //DM-01-02-03-04, B01MDC_02
+					$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+					$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+					$value = "B".$tmpBranchCode."MDC_".$tmpZoneCode;
+				} else if($meta['name'] == "LINE_1_DEVICE") {
+					$value = $paramListDM[$j-$startRow]->name;
+				} else if($meta['name'] == "STATUS_ITEM") {
+					$tmpDM_Name = $paramListDM[$j-$startRow]->name;	//DM-01-02-03-04, SERVICE.B01.DM-01-02-03-04.COMM_STS
+					$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+					$value = "SERVICE.B".$tmpBranchCode.".".$tmpDM_Name.".COMM_STS";
+				} else {
+					$value = $results_data[$meta['name']];
+				}
+
+
+				$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+			}
+
+		}
+
+
+
+
+		/* Set Title */
+		// Rename worksheet
+		//$objPHPExcel->getActiveSheet()->setTitle('MODBUS_STATION_DF');
+
+

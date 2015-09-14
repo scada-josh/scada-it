@@ -1,0 +1,68 @@
+		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_MODBUS_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'MODBUS_POINT_DF');
+		$objPHPExcel->addSheet($objPHPExcel_MODBUS_POINT_DF_Worksheet, $sheetCount);
+		$objPHPExcel_MODBUS_POINT_DF_Worksheet->setTitle('MODBUS_POINT_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_modbus_point_df = $db->modbus_point_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_modbus_point_df = $pdo->prepare("SELECT * FROM modbus_point_df WHERE templates = 'header_template'");
+		$sth_modbus_point_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_modbus_point_df = $sth_modbus_point_df->columnCount();
+		$startRow_modbus_point_df = 2;
+		$startColumn_modbus_point_df = 4;
+
+		for ($i = $startColumn_modbus_point_df; $i < $numCols_modbus_point_df; $i++) {
+			$meta = $sth_modbus_point_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_modbus_point_df;
+			$value = $results_header_modbus_point_df[$meta['name']];
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_modbus_point_df; $j < $numDM+$startRow_modbus_point_df; $j++) { 
+
+			$results_data_modbus_point_dfs = $db->modbus_point_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_modbus_point_dfs as $results_data_modbus_point_df) {
+					$z = $z +1;
+					for ($i = $startColumn_modbus_point_df; $i < $numCols_modbus_point_df; $i ++) {
+						$meta = $sth_modbus_point_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_modbus_point_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "STATION") {
+							$value = $paramListDM[$j-$startRow_modbus_point_df]->name;
+						} else if($meta['name'] == "NAME"){
+							$tmpDM_Name = $paramListDM[$j-$startRow_modbus_point_df]->name;
+							$value = $tmpDM_Name.":".$results_data_modbus_point_df["POINT"];
+						} else {
+							$value = $results_data_modbus_point_df[$meta['name']];
+						}
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+

@@ -1,0 +1,104 @@
+	/**
+	 *
+	 * @apiName UpdateCommentHostFileManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/updateCommentHostFileManager/ Update Comment in Host file
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับอัพเดต Comment ในฐานข้อมูลที่เก็บ Host file (ตาราง "tb_scada_host_info")
+	 *
+	 *
+	 *
+	 * @apiSampleRequest /AdminAPI/updateCommentHostFileManager/
+	 *
+	 * @apiSuccess {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+	 * {
+	 *   "msg": "Hello, anusorn"
+	 * }
+	 *
+	 * @apiError UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+	 function updateCommentHostFileManager($app, $pdo, $db) {
+		
+	 	/* ************************* */
+	 	/* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+	 	/* ************************* */
+	 	$reports = array();
+
+		$scada_host_info_results = $db->tb_scada_host_info();
+
+		foreach ($scada_host_info_results as $scada_host_info_result) {
+			
+			$tmpHostName = $scada_host_info_result["host_name"];
+
+			// ค้นหา Logger Code จากฐานข้อมูล (ตาราง "tb_main02_scada_rtu_info")
+			$scada_rtu_info_result = $db->tb_main02_scada_rtu_info()->where("meter_code = ? ", $tmpHostName)->fetch();
+
+			// ค้นหารายละเอียด Logger Code จากฐานข้อมูล (ตาราง "tb_rtu_general_info")
+			$rtu_general_info_result = $db->tb_rtu_general_info()->where("LOGGER_CODE = ? ", $scada_rtu_info_result["logger_code"])->fetch();
+
+
+			//#B01 B&R  X20 PSTN
+
+			if (substr($scada_host_info_result["host_name"],0,2) == "DM") {
+				$tmpBranchName = "B".substr($scada_host_info_result["host_name"],3,2);
+				$tmpComment = "#".$tmpBranchName."	".$rtu_general_info_result["BRAND"]."	".$scada_rtu_info_result["logger_code"]."	".$scada_rtu_info_result["comm"];
+			} else {
+				$tmpBranchName = "";
+				$tmpComment = "";
+			}
+
+			$data = array(
+				"comments" => $tmpComment
+			);
+
+			// อัพเดต Comment ในฐานข้อมูลที่เก็บ Host file (ตาราง "tb_scada_host_info")
+			$scada_host_info_result_update = $db->tb_scada_host_info()->where("host_name = ? ", $tmpHostName)->fetch();
+
+			if ($scada_host_info_result_update !== false) {
+
+				$result_updateScadaRTUInfo = $scada_host_info_result_update->update($data);
+			    
+			} else {
+
+				$result_updateScadaRTUInfo = $scada_host_info_result_update->update($data);
+			}
+
+
+
+
+
+			
+
+			$reports[] = array(
+				"hostName" => $scada_host_info_result["host_name"],
+				"ipAddress" => $scada_host_info_result["ip"],
+				"comment" => $tmpComment
+				);
+
+		}
+
+		$rowCount = count($scada_host_info_results);
+
+	    /* ************************* */
+	    /* เริ่มกระบวนการส่งค่ากลับ */
+	    /* ************************* */
+	    $resultText = "success";
+
+	    $reportResult = array("result" =>  $resultText, "count"=>$rowCount, "rows" => $reports);
+
+	    $app->response()->header("Content-Type", "application/json");
+	    echo json_encode($reportResult);
+
+	    // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+	    // echo json_encode($return_m);
+
+	}

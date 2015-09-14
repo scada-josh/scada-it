@@ -1,0 +1,183 @@
+
+	/**
+	 *
+	 * @apiName CompareWithExistingRtuManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/compareWithExistingRtuManager/ CompareWithExistingRtuManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับตรวจสอบและเปรียบเทียบรายละเอียด RTU (เช่น IP Address, ชือ DM) ที่มีอยู่แล้วกับรายการ RTU ที่กำลังจะดำเนินการเพิ่มเข้าไป
+	 *
+	 *
+	 *
+	 * @apiParam {Object[]} listRTU รายการ RTU ที่ต้องการเพิ่มเข้าไปใหม่ในระบบ SCADA FastTools
+	 * @apiParam {String} listRTU.branch_code รหัสสาขา
+     * @apiParam {String} listRTU.zone_code รหัสโซน
+     * @apiParam {String} listRTU.dma_code รหัส DMA
+     * @apiParam {String} listRTU.meter_code รหัส DM หรือ meter_code นั่นเอง
+     * @apiParam {String} listRTU.ip IP Address
+     * @apiParam {String} listRTU.logger_code รหัสตัวแทนอุปกรณ์ภาคสนาม
+     * @apiParam {String} listRTU.rtu_status สถานะ RTU (1 : OnScan, 0 : OffScan, blank : อาจจะเป็นกรณีการเชื่อมต่อผ่านทาง OPCDA ซึ่ง OnScan เป็นกลุ่มไม่ได้แยกแต่ละ DM)
+     *
+     * @apiParamExample {json} Request-Example (ตัวอย่าง Payload, Content-Type: application/json):
+     *  {
+     *      "listRTU": [
+     *          {
+     *              "branch_code": "",
+     *              "zone_code": "",
+     *              "dma_code": "",
+     *              "meter_code": "DM-13-01-02-01",
+     *              "ip": "10.50.133.145",
+     *              "logger_code": "SIXNET",
+     *              "rtu_status": "1"
+     *          },
+     *          {
+     *              "branch_code": "",
+     *              "zone_code": "",
+     *              "dma_code": "",
+     *              "meter_code": "DM-13-01-03-04",
+     *              "ip": "10.202.71.63",
+     *              "logger_code": "SIXNET",
+     *              "rtu_status": "1"
+     *          },
+     *          {
+     *              "branch_code": "",
+     *              "zone_code": "",
+     *              "dma_code": "",
+     *              "meter_code": "DM-54-08-12-01",
+     *              "ip": "10.50.131.92",
+     *              "logger_code": "X20",
+     *              "rtu_status": "1"
+     *          }
+     *      ]
+     *  }
+     *
+	 * @apiSampleRequest /AdminAPI/compareWithExistingRtuManager/
+	 *
+	 * @apiSuccess (คำอธิบายผลลัพธ์ (กรณีส่งค่ากลับสำเร็จ Success 200)) {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+     *  {
+     *      "result": "success",
+     *      "rows": [
+     *          {
+     *              "filename": "Quickload_for_MODBUS(PGIM_WTDC)_2015-08-15_1439607474.xls",
+     *              "path": "http://localhost/scada-it/build/files/Quickload_for_MODBUS(PGIM_WTDC)_2015-08-15_1439607474.xls"
+     *          }
+     *      ]
+     *  }
+	 *
+	 * @apiError (คำอธิบายผลลัพธ์ (กรณีเกิด Error 4xx)) UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+    function compareWithExistingRtuManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             $paramListRTU = $result->listRTU;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+          $reports = array();
+          $reports_ip_compare = array();
+          $reports_meterCode_compare = array();
+          $ip_compared_duplicate = 0;
+          $meterCode_compared_duplicate = 0;
+
+          $numDM = count($paramListRTU);  // จำนวน DM
+
+          for ($i=0; $i < $numDM; $i++) { 
+
+               $tmpMeterCode = $paramListRTU[$i]->meter_code;
+               $tmpIP = $paramListRTU[$i]->ip;
+               $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+
+               // ค้นหา ip  จากฐานข้อมูล (ตาราง "tb_scada_host_info")
+               $result_ip_compare = $db->tb_scada_host_info()->where("ip = ? and status = 1", $tmpIP)->fetch();
+
+               if ($result_ip_compare) {
+                    $reports_ip_compare[] = array(
+                                                  "meter_code" => $tmpMeterCode,
+                                                  "ip" => $tmpIP,
+                                                  "loggerCode" => $tmpLoggerCode,
+                                                  "compare_result" => array("meterCode" => $result_ip_compare["host_name"], 
+                                                                            "ip" => $result_ip_compare["ip"],
+                                                                            "comment" => $result_ip_compare["comments"])
+                                             );
+                    $ip_compared_duplicate++;
+               }
+
+
+               // ค้นหา meter_code  จากฐานข้อมูล (ตาราง "tb_scada_host_info")
+               $result_meterCode_compare = $db->tb_scada_host_info()->where("host_name = ? and status = 1", $tmpMeterCode)->fetch();
+
+               if ($result_meterCode_compare) {
+                    $reports_meterCode_compare[] = array(
+                                                  "meter_code" => $tmpMeterCode,
+                                                  "ip" => $tmpIP,
+                                                  "loggerCode" => $tmpLoggerCode,
+                                                  "compare_result" => array("meterCode" => $result_meterCode_compare["host_name"], 
+                                                                            "ip" => $result_meterCode_compare["ip"],
+                                                                            "comment" => $result_meterCode_compare["comments"])
+                                             );
+                    $meterCode_compared_duplicate++;
+               }
+
+          }
+          
+
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+         $resultText = "success";
+
+         $compare_results = array("ip_compared_details" =>  $reports_ip_compare, "meterCode_compared_details" => $reports_meterCode_compare);
+
+         $reports[] = array(
+               "ip_compared_details" => $reports_ip_compare,
+               "meterCode_compared_details" => $reports_meterCode_compare
+          );
+
+         $reportResult = array("result" =>  $resultText,
+                                   "ip_compared_duplicate" => $ip_compared_duplicate, 
+                                   "meterCode_compared_duplicate" => $meterCode_compared_duplicate, 
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+
+
+    }

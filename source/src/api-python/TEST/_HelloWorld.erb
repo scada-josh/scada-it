@@ -1,0 +1,14 @@
+"""
+@api {get} /hello_world Test RESTful with flask-restful 
+@apiName hello_world
+@apiGroup TEST
+@apiSampleRequest /hello_world
+"""
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world (GET)'}
+
+    def post(self, todo_id):
+    	# todos[todo_id] = request.form['data']
+    	app.logger.debug('# todo_id #\n' + repr(todo_id))
+        return {'hello': 'Hello'+ repr(todo_id) +' (POST)'}

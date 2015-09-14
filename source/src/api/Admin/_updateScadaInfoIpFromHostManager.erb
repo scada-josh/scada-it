@@ -1,0 +1,94 @@
+	/**
+	 *
+	 * @apiName UpdateScadaInfoIpFromHostManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/updateScadaInfoIpFromHostManager/ Update SCADA Info from Host
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับอัพเดตข้อมูล IP Address ใน SCADA โดยอ้างอิงจากฐานข้อมูลที่เก็บ Host file (ตาราง "tb_scada_host_info")
+	 *
+	 *
+	 *
+	 * @apiSampleRequest /AdminAPI/updateScadaInfoIpFromHostManager/
+	 *
+	 * @apiSuccess {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+	 * {
+	 *   "msg": "Hello, anusorn"
+	 * }
+	 *
+	 * @apiError UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+	 function updateScadaInfoIpFromHostManager($app, $pdo, $db) {
+		
+	 	/* ************************* */
+	 	/* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+	 	/* ************************* */
+	 	$reports = array();
+
+		$scada_rtu_info_results = $db->tb_main02_scada_rtu_info();
+
+		foreach ($scada_rtu_info_results as $scada_rtu_info_result) {
+			// ค้นหา ip address จากฐานข้อมูลที่เก็บ Host file (ตาราง "tb_scada_host_info")
+			$host_info_result = $db->tb_scada_host_info()->where("host_name = ? and status = 1", $scada_rtu_info_result["meter_code"])->fetch();
+
+
+			$result_scadaInfo = $db->tb_main02_scada_rtu_info()->where("meter_code = ?", $scada_rtu_info_result["meter_code"])->fetch();
+			if ($result_scadaInfo !== false) {
+
+				$data = array(
+					"ip_address" => $host_info_result["ip"],
+					"comm" => (substr($host_info_result["ip"],0,3)=="192"?"PSTN":"GPRS")
+				);
+
+				$result_updateScadaInfo = $result_scadaInfo->update($data);
+			    $msgIpAddress = $host_info_result["ip"];
+			    
+			} else {
+
+				$data = array(
+					"ip_address" => "",
+					"comm" => ""
+				);
+				$result_updateScadaInfo = $result_scadaInfo->update($data);
+			    $msgIpAddress = "";
+			}
+
+			// if ($result_updateScadaInfo) {
+			// 	$resultMsg = "อัพเดตข้อมูล รหัส $postWalkInId สำเร็จ";
+			// } else {
+			// 	$resultMsg = "ไม่สามารถอัพเดตข้อมูลได้";
+			// }
+
+
+			$reports[] = array(
+				"meterCode" => $scada_rtu_info_result["meter_code"],
+				"loggerCode" => $scada_rtu_info_result["logger_code"],
+				"ipAddress" => $msgIpAddress
+				);
+
+		}
+
+		$rowCount = count($scada_rtu_info_results);
+
+	    /* ************************* */
+	    /* เริ่มกระบวนการส่งค่ากลับ */
+	    /* ************************* */
+	    $resultText = "success";
+
+	    $reportResult = array("result" =>  $resultText, "count"=>$rowCount, "rows" => $reports);
+
+	    $app->response()->header("Content-Type", "application/json");
+	    echo json_encode($reportResult);
+
+	    // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+	    // echo json_encode($return_m);
+
+	}

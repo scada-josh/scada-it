@@ -1,0 +1,459 @@
+		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_OBJECT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'OBJECT_DF');
+		$objPHPExcel->addSheet($objPHPExcel_OBJECT_DF_Worksheet, $sheetCount);
+		$objPHPExcel_OBJECT_DF_Worksheet->setTitle('OBJECT_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_object_df = $db->object_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_object_df = $pdo->prepare("SELECT * FROM object_df WHERE templates = 'header_template'");
+		$sth_object_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_object_df = $sth_object_df->columnCount();
+		$startRow_object_df = 2;
+		$startColumn_object_df = 4;
+
+		for ($i = $startColumn_object_df; $i < $numCols_object_df; $i++) {
+			$meta = $sth_object_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_object_df;
+			$tmpValue = $results_header_object_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_object_df; $j < $numDM+$startRow_object_df; $j++) { 
+
+			$results_data_object_dfs = $db->object_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_object_dfs as $results_data_object_df) {
+
+					$z = $z +1;
+					for ($i = $startColumn_object_df; $i < $numCols_object_df; $i ++) {
+						$meta = $sth_object_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_object_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "UNIT") {
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "WTDC";
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $tmpBranch_Name;
+							}
+
+						} else if ($meta['name'] == "TAG") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$value = $tmpDM_Name;
+
+						} else if ($meta['name'] == "DESCRIPTION") {
+							
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+								$value = $paramFastToolsDestination;
+							}
+
+						} else if ($meta['name'] == "NAME") {
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208.U208
+								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".".$tmpDM_Name;
+							} else {
+								//SERVICE.B01.DM-01-06-03-02.DM-01-06-03-02
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".".$tmpDM_Name;
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_1") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208.FT
+								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".FT";
+							} else {
+								// SERVICE.B01.DM-01-06-03-02.FT
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+							}
+
+
+						} else if ($meta['name'] == "ATTR_VALUE_2") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_HI_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208.PT
+								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_FT_HI_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_ALM";
+								}
+								
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_3") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_LO_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_FT_LO_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_ALM";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_4") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_HI_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_FT_HI_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_5") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_LO_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_6") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
+								// }
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_7") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_HI_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_ALM";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_8") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_LO_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_ALM";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_9") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_HI_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_10") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_LO_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_11") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT";
+								// }
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_12") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_HI_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_ALM";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_13") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_LO_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_ALM";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_14") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_HI_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_SP";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_15") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_LO_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_SP";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_16") {
+
+							//SERVICE.B01.DM-01-06-03-02.TOTAL
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".TOTAL";
+								// }
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_17") {
+
+							//SERVICE.B01.DM-01-06-03-02.LOG_FREQ
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".LOG_FREQ";
+								// }
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_18") {
+
+							//SERVICE.B01.DM-01-06-03-02.COMM_STS
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "PGIM_BRANCH") {
+									$value = "OTHER.DUMMY.DUMMY_COMM_STS";
+								} else if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_COMM_STS";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".COMM_STS";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_19") {
+
+							//SERVICE.B01.DM-01-06-03-02.COMM_STS
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "PGIM_BRANCH") {
+									// SERVICE.B02.DM-02-15-01-01.ON
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".ON";
+								} else {
+									$value = "OTHER.DUMMY.DUMMY_ON";
+								}
+							}
+							
+
+						} else {
+							$tmpValue = $results_data_object_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+
+			}
+
+		}
+
+
+

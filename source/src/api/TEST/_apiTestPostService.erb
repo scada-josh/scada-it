@@ -1,0 +1,35 @@
+	/**
+	 *
+	 * @apiName HelloWorld_POST
+	 * @apiGroup TEST SERVICE
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /hello/ Test POST Service (v 0.1.0)
+	 * @apiDescription คำอธิบาย : Hello World, Test Post Service
+	 *
+	 *
+	 *
+	 * @apiSampleRequest /hello/
+	 *
+	 * @apiSuccess {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+	 * {
+     *   "msg": "Hello, Current PHP version: 5.6.8"
+	 * }
+	 *
+	 * @apiError UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+	$app->post('/hello/', function () {
+		
+
+	    $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+	    echo json_encode($return_m);
+
+	});
