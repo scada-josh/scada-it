@@ -1,0 +1,18 @@
+{
+  "name": "SCADA IT - RESTful Service (Python)",
+  "version": "0.1.0",
+  "description": "RESTful Web Service (Python) สำหรับสนับสนุนงานด้าน SCADA การประปานครหลวง",
+  "title": "RESTful Web Service (Python) สำหรับสนับสนุนงานด้าน SCADA การประปานครหลวง",
+  "url" : "http://localhost:5000",
+  "sampleUrl" : "http://localhost:5000",
+   "header": {
+    "title": "SCADA IT - API",
+    "filename": "./static/apidoc/header.html"
+  },
+  "footer": {
+    "title": "แหล่งข้อมูลอ้างอิง",
+    "filename": "./static/apidoc/footer.html"
+  },
+  "order": [
+  ]
+}
