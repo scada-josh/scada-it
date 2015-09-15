@@ -59,6 +59,9 @@ layout: "layout-blank"
     $app->post('/AdminAPI/compareWithExistingRtuManager/',function() use ($app, $pdo, $db) { 
         compareWithExistingRtuManager($app, $pdo, $db); 
     });
+    $app->post('/AdminAPI/addNewRtuInfoManager/',function() use ($app, $pdo, $db) { 
+        addNewRtuInfoManager($app, $pdo, $db); 
+    });
 
 
 	$app->run();
@@ -74,5 +77,6 @@ layout: "layout-blank"
     <%= partial "/Admin/_updateInsertAllRtuManager" %>
     <%= partial "/Admin/_updateOnOffScanScadaInfoManager" %>
     <%= partial "/Admin/_compareWithExistingRtuManager" %>
+    <%= partial "/Admin/_addNewRtuInfoManager" %>
 
 ?>

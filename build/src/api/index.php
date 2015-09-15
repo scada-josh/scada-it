@@ -140,6 +140,9 @@
     $app->post('/AdminAPI/compareWithExistingRtuManager/',function() use ($app, $pdo, $db) { 
         compareWithExistingRtuManager($app, $pdo, $db); 
     });
+    $app->post('/AdminAPI/addNewRtuInfoManager/',function() use ($app, $pdo, $db) { 
+        addNewRtuInfoManager($app, $pdo, $db); 
+    });
 
 
 	$app->run();
@@ -3726,6 +3729,29 @@
 
          // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
          // echo json_encode($return_m);
+
+
+
+    }
+    
+	/**
+	 *
+	 * @apiName AddNewRtuInfoManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/addNewRtuInfoManager/ AddNewRtuInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_scada_station_df, tb_main01_user_rtu_info, tb_main02_scada_rtu_info
+	 *
+	 *
+	 */
+    function addNewRtuInfoManager($app, $pdo, $db) {
+
+
+        
+
+         $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         echo json_encode($return_m);
 
 
 

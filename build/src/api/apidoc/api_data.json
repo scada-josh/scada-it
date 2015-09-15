@@ -1,5 +1,21 @@
 [
   {
+    "name": "AddNewRtuInfoManager",
+    "group": "Admin",
+    "version": "0.1.0",
+    "type": "post",
+    "url": "/AdminAPI/addNewRtuInfoManager/",
+    "title": "AddNewRtuInfoManager",
+    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_scada_station_df, tb_main01_user_rtu_info, tb_main02_scada_rtu_info</p> ",
+    "filename": "./index.php",
+    "groupTitle": "Admin",
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api/AdminAPI/addNewRtuInfoManager/"
+      }
+    ]
+  },
+  {
     "name": "CompareWithExistingRtuManager",
     "group": "Admin",
     "version": "0.1.0",
