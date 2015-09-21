@@ -72,6 +72,16 @@
 									$value = "N/A";
 								}
 
+							} else if($paramRtuInstall == "ABB CTU800"){
+
+								if ((substr($tmpValue, -2) == "FT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.FT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+								} else if ((substr($tmpValue, -6) == "PT_INT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.PT_INT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
+								}
+
 							} else {
 								// TEN_SECONDS:SERVICE.B02.DM-02-02-08-01.PT_EXT
 								if ((substr($tmpValue, -2) == "FT")) {

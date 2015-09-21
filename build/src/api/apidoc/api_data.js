@@ -360,6 +360,105 @@ define({ "api": [
     "groupTitle": "Admin"
   },
   {
+    "name": "IEC60870_Manager",
+    "group": "Fast_Tools",
+    "version": "0.1.0",
+    "type": "post",
+    "url": "/FastToolsAPI/IEC60870_Manager/",
+    "title": "IEC60870_Manager",
+    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับสร้าง FAST/TOOLS Quickload สำหรับโปรโตคอล IEC60870-5-104</p> ",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "rtu_install",
+            "defaultValue": "SERVICE",
+            "description": "<p>คำอธิบายกลุ่มของอุปกรณ์ เช่น SERVICE, PRODUCTION, OTHER</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "fasttools_destination",
+            "defaultValue": "ABB CTU800",
+            "description": "<p>คำอธิบายชนิดของอุปกรณ์ เช่น ABB CTU800</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Object[]",
+            "optional": false,
+            "field": "listDM",
+            "description": "<p>รายการ DM</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "listDM.name",
+            "defaultValue": "DM-01-01-01-01",
+            "description": "<p>ชื่อ DM</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example (ตัวอย่าง Payload, Content-Type: application/json):",
+          "content": "{\n    \"rtu_install\": \"SERVICE\",\n    \"fasttools_destination\": \"ABB CTU800\",\n    \"listDM\": [\n        {\n            \"name\": \"DM-01-01-01-01\"\n        },\n        {\n            \"name\": \"DM-01-01-01-02\"\n        },\n        {\n            \"name\": \"DM-01-01-01-03\"\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api/FastToolsAPI/IEC60870_Manager/"
+      }
+    ],
+    "success": {
+      "fields": {
+        "คำอธิบายผลลัพธ์ (กรณีส่งค่ากลับสำเร็จ Success 200)": [
+          {
+            "group": "คำอธิบายผลลัพธ์ (กรณีส่งค่ากลับสำเร็จ Success 200)",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>แสดงข้อความทักทายผู้ใช้งาน</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Example data on success:",
+          "content": "{\n    \"result\": \"success\",\n    \"rows\": [\n        {\n            \"filename\": \"Quickload_for_IEC60870(PGIM_WTDC)_2015-08-15_1439607474.xls\",\n            \"path\": \"http://localhost/scada-it/build/files/Quickload_for_IEC60870(PGIM_WTDC)_2015-08-15_1439607474.xls\"\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "คำอธิบายผลลัพธ์ (กรณีเกิด Error 4xx)": [
+          {
+            "group": "คำอธิบายผลลัพธ์ (กรณีเกิด Error 4xx)",
+            "optional": false,
+            "field": "UserNotFound",
+            "description": "<p>The <code>id</code> of the User was not found.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"UserNotFound\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "./index.php",
+    "groupTitle": "Fast_Tools"
+  },
+  {
     "name": "MODBUS_Manager",
     "group": "Fast_Tools",
     "version": "0.1.0",
@@ -686,6 +785,34 @@ define({ "api": [
     },
     "filename": "./index.php",
     "groupTitle": "TEST_SERVICE"
+  },
+  {
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api, iOS RESTKit use content-type is \"application/json\"\nWeb Form, Advance REST Client App use content-type is \"application/x-www-form-urlencoded\""
+      }
+    ],
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./index.php",
+    "group": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "groupTitle": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "name": ""
+  },
+  {
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api, iOS RESTKit use content-type is \"application/json\"\nWeb Form, Advance REST Client App use content-type is \"application/x-www-form-urlencoded\""
+      }
+    ],
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./index.php",
+    "group": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "groupTitle": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "name": ""
   },
   {
     "sampleRequest": [

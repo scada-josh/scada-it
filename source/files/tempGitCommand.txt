@@ -1,0 +1,4 @@
+git commit -m "2015-09-15 v2 scada-it(initial addNewRtuInfoManager)"
+
+
+

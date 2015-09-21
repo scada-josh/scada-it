@@ -113,7 +113,7 @@
 								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_ALM";
@@ -133,7 +133,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_ALM";
@@ -151,7 +151,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_SP";
@@ -169,7 +169,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_SP";
@@ -205,7 +205,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_ALM";
@@ -223,7 +223,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_ALM";
@@ -241,7 +241,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_SP";
@@ -259,7 +259,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_SP";
@@ -277,11 +277,11 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								// if($paramFastToolsDestination == "DCXII") {
-								// 	$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
-								// } else {
+								if($paramFastToolsDestination == "ABB CTU800") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT";
+								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT";
-								// }
+								}
 							}
 							
 
@@ -296,7 +296,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_ALM";
@@ -315,7 +315,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_ALM";
@@ -334,7 +334,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_SP";
@@ -353,7 +353,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_SP";

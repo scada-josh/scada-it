@@ -38,6 +38,9 @@ layout: "layout-blank"
     $app->post('/FastToolsAPI/OPCDAC_Manager/',function() use ($app, $pdo, $db, $objPHPExcel) { 
         OPCDAC_Manager($app, $pdo, $db, $objPHPExcel); 
     });
+    $app->post('/FastToolsAPI/IEC60870_Manager/',function() use ($app, $pdo, $db, $objPHPExcel) { 
+        IEC60870_Manager($app, $pdo, $db, $objPHPExcel); 
+    });
 
 
 
@@ -69,6 +72,7 @@ layout: "layout-blank"
     /* Fast/Tools Configuration manager Partial */
     <%= partial "/FastTools/_MODBUS_Manager" %>
     <%= partial "/FastTools/_OPCDAC_Manager" %>
+    <%= partial "/FastTools/_IEC60870_Manager" %>
     
 
     /* Admin manager Partial */
