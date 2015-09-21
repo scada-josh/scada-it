@@ -1,0 +1,96 @@
+		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_IEC60870_STATION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC60870_STATION_DF');
+		$objPHPExcel->addSheet($objPHPExcel_IEC60870_STATION_DF_Worksheet, $sheetCount);
+		$objPHPExcel_IEC60870_STATION_DF_Worksheet->setTitle('IEC60870_STATION_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Quickload for MODBUS (MODBUS_STATION_DF) */
+        /* ************************* */
+
+		/* Create Header */
+		//$reports = $db->modbus_station_df[1];
+		//$results_header = $db->opcdac_station_df()->where("templates = ?", "header_template")->fetch();
+		$results_header_iec60870_station_df = $db->iec60870_station_df()->where("templates = ?", "header_template")->fetch();
+
+        $sth_iec60870_station_df = $pdo->prepare("SELECT * FROM iec60870_station_df WHERE templates = 'header_template'");
+        $sth_iec60870_station_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_iec60870_station_df = $sth_iec60870_station_df->columnCount();
+		$startRow_iec60870_station_df = 2;
+		$startColumn_iec60870_station_df = 4;
+
+		for ($i = $startColumn_iec60870_station_df; $i < $numCols_iec60870_station_df; $i ++) {
+			$meta = $sth_iec60870_station_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_iec60870_station_df;
+			$value = $results_header_iec60870_station_df[$meta['name']];
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_iec60870_station_df; $j < $numDM+$startRow_iec60870_station_df; $j++) { 
+
+			//$results_data_opcdac_station_dfs = $db->opcdac_station_df()->where("templates = ? and rtu_install = ? and rtu_modbus_brand = ?", "data_template", $paramRtuInstall, $paramRtuModbusBrand);
+			$results_data_iec60870_station_dfs = $db->iec60870_station_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_iec60870_station_dfs as $results_data_iec60870_station_df) {
+					$z = $z +1;
+					for ($i = $startColumn_iec60870_station_df; $i < $numCols_iec60870_station_df; $i ++) {
+						$meta = $sth_iec60870_station_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_iec60870_station_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						 if ($meta['name'] == "NAME") {
+						 	// DM-03-01-01-01
+						 	$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$value = $tmpDM_Name;
+
+						 } else if($meta['name'] == "DESCRIPTION") {
+						 	// DM-03-01-01-01
+						 	$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$value = $tmpDM_Name;
+
+						 } else if ($meta['name'] == "LINE") {
+						 	// B03IEC
+					 		$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+							$value = "B".$tmpBranchCode."IEC_".$tmpZoneCode;
+
+						 } else if($meta['name'] == "LINE_1_DEVICE") {
+						 	// DM-03-01-01-01
+						 	$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$value = $tmpDM_Name;
+							
+						 } else {
+						 	$tmpValue = $results_data_iec60870_station_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						 }
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+
+
+
+

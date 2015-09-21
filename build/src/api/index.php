@@ -119,6 +119,9 @@
     $app->post('/FastToolsAPI/OPCDAC_Manager/',function() use ($app, $pdo, $db, $objPHPExcel) { 
         OPCDAC_Manager($app, $pdo, $db, $objPHPExcel); 
     });
+    $app->post('/FastToolsAPI/IEC60870_Manager/',function() use ($app, $pdo, $db, $objPHPExcel) { 
+        IEC60870_Manager($app, $pdo, $db, $objPHPExcel); 
+    });
 
 
 
@@ -139,6 +142,9 @@
     });
     $app->post('/AdminAPI/compareWithExistingRtuManager/',function() use ($app, $pdo, $db) { 
         compareWithExistingRtuManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/addNewRtuInfoManager/',function() use ($app, $pdo, $db) { 
+        addNewRtuInfoManager($app, $pdo, $db); 
     });
 
 
@@ -661,7 +667,7 @@
 							    							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
 							$tmpBranch_Name = substr($tmpDM_Name, 3, 2);
 
-							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
 								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
 								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
 								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
@@ -729,7 +735,7 @@
 						} else if ($meta['name'] == "POINT") {
 							
 								/*  MODBUS_LINE_DF Partial */
-							    							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+							    							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
 								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
 								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
 								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
@@ -794,7 +800,7 @@
 								/*  MODBUS_LINE_DF Partial */
 							    							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
 
-							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
 								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
 								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
 								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
@@ -1001,7 +1007,7 @@
 								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_ALM";
@@ -1021,7 +1027,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_ALM";
@@ -1039,7 +1045,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_SP";
@@ -1057,7 +1063,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_SP";
@@ -1093,7 +1099,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_ALM";
@@ -1111,7 +1117,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_ALM";
@@ -1129,7 +1135,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_SP";
@@ -1147,7 +1153,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_SP";
@@ -1165,11 +1171,11 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								// if($paramFastToolsDestination == "DCXII") {
-								// 	$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
-								// } else {
+								if($paramFastToolsDestination == "ABB CTU800") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT";
+								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT";
-								// }
+								}
 							}
 							
 
@@ -1184,7 +1190,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_ALM";
@@ -1203,7 +1209,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_ALM";
@@ -1222,7 +1228,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_SP";
@@ -1241,7 +1247,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_SP";
@@ -1420,6 +1426,16 @@
 									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
 								} else {
 									$value = "N/A";
+								}
+
+							} else if($paramRtuInstall == "ABB CTU800"){
+
+								if ((substr($tmpValue, -2) == "FT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.FT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+								} else if ((substr($tmpValue, -6) == "PT_INT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.PT_INT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
 								}
 
 							} else {
@@ -2294,7 +2310,7 @@
 							    							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
 							$tmpBranch_Name = substr($tmpDM_Name, 3, 2);
 
-							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
 								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
 								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
 								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
@@ -2362,7 +2378,7 @@
 						} else if ($meta['name'] == "POINT") {
 							
 								/*  MODBUS_LINE_DF Partial */
-							    							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+							    							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
 								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
 								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
 								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
@@ -2427,7 +2443,7 @@
 								/*  MODBUS_LINE_DF Partial */
 							    							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
 
-							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")) {
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
 								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
 								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
 								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
@@ -2634,7 +2650,7 @@
 								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_ALM";
@@ -2654,7 +2670,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_ALM";
@@ -2672,7 +2688,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_SP";
@@ -2690,7 +2706,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_SP";
@@ -2726,7 +2742,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_ALM";
@@ -2744,7 +2760,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_ALM";
@@ -2762,7 +2778,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_SP";
@@ -2780,7 +2796,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_SP";
@@ -2798,11 +2814,11 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								// if($paramFastToolsDestination == "DCXII") {
-								// 	$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
-								// } else {
+								if($paramFastToolsDestination == "ABB CTU800") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT";
+								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT";
-								// }
+								}
 							}
 							
 
@@ -2817,7 +2833,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_ALM";
@@ -2836,7 +2852,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_ALM";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_ALM";
@@ -2855,7 +2871,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_SP";
@@ -2874,7 +2890,7 @@
 								//$value = $results_data_object_df[$meta['name']];
 							} else {
 
-								if($paramFastToolsDestination == "DCXII") {
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
 									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
 								} else {
 									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_SP";
@@ -3055,6 +3071,16 @@
 									$value = "N/A";
 								}
 
+							} else if($paramRtuInstall == "ABB CTU800"){
+
+								if ((substr($tmpValue, -2) == "FT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.FT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+								} else if ((substr($tmpValue, -6) == "PT_INT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.PT_INT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
+								}
+
 							} else {
 								// TEN_SECONDS:SERVICE.B02.DM-02-02-08-01.PT_EXT
 								if ((substr($tmpValue, -2) == "FT")) {
@@ -3139,6 +3165,1404 @@
 
 	    // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
 	    // echo json_encode($return_m);
+
+
+    }
+    
+	/**
+	 *
+	 * @apiName IEC60870_Manager
+	 * @apiGroup Fast_Tools
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /FastToolsAPI/IEC60870_Manager/ IEC60870_Manager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับสร้าง FAST/TOOLS Quickload สำหรับโปรโตคอล IEC60870-5-104
+	 *
+	 *
+	 *
+	 * @apiParam {String} rtu_install = "SERVICE" คำอธิบายกลุ่มของอุปกรณ์ เช่น SERVICE, PRODUCTION, OTHER
+	 * @apiParam {String} fasttools_destination = "ABB CTU800" คำอธิบายชนิดของอุปกรณ์ เช่น ABB CTU800
+     * @apiParam {Object[]} listDM  รายการ DM
+     * @apiParam {String} listDM.name = "DM-01-01-01-01" ชื่อ DM
+     *
+     * @apiParamExample {json} Request-Example (ตัวอย่าง Payload, Content-Type: application/json):
+     *  {
+     *      "rtu_install": "SERVICE",
+     *      "fasttools_destination": "ABB CTU800",
+     *      "listDM": [
+     *          {
+     *              "name": "DM-01-01-01-01"
+     *          },
+     *          {
+     *              "name": "DM-01-01-01-02"
+     *          },
+     *          {
+     *              "name": "DM-01-01-01-03"
+     *          }
+     *      ]
+     *  }
+     *
+	 * @apiSampleRequest /FastToolsAPI/IEC60870_Manager/
+	 *
+	 * @apiSuccess (คำอธิบายผลลัพธ์ (กรณีส่งค่ากลับสำเร็จ Success 200)) {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+     *  {
+     *      "result": "success",
+     *      "rows": [
+     *          {
+     *              "filename": "Quickload_for_IEC60870(PGIM_WTDC)_2015-08-15_1439607474.xls",
+     *              "path": "http://localhost/scada-it/build/files/Quickload_for_IEC60870(PGIM_WTDC)_2015-08-15_1439607474.xls"
+     *          }
+     *      ]
+     *  }
+	 *
+	 * @apiError (คำอธิบายผลลัพธ์ (กรณีเกิด Error 4xx)) UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+    function IEC60870_Manager($app, $pdo, $db, $objPHPExcel) {
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+	        $request = $app->request();
+	        $result = json_decode($request->getBody());
+
+	        /* receive request */
+	        $paramRtuInstall = $result->rtu_install;
+	        $paramFastToolsDestination = $result->fasttools_destination;
+	        $paramListDM = $result->listDM;
+
+ 
+		} else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+		    //$userID = $app->request()->params('userID_param');
+		    //$userID = $app->request()->post('userID_param');
+		}
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+        /* ************************* */
+
+        $reports = array();
+		
+		
+		/*  IEC60870_LINE_DF Partial */
+	    
+		/* Create Header */
+		//$reports = $db->iec60870_point_df[1];
+		$results_header_iec60870_line_df = $db->iec60870_line_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_iec60870_line_df = $pdo->prepare("SELECT * FROM iec60870_line_df WHERE templates = 'header_template'");
+		$sth_iec60870_line_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_iec60870_line_df = $sth_iec60870_line_df->columnCount();
+		$startRow_iec60870_line_df = 2;
+		$startColumn_iec60870_line_df = 4;
+
+		for ($i = $startColumn_iec60870_line_df; $i < $numCols_iec60870_line_df; $i++) {
+			$meta = $sth_iec60870_line_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_iec60870_line_df;
+			$tmpValue = $results_header_iec60870_line_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_iec60870_line_df; $j < $numDM+$startRow_iec60870_line_df; $j++) { 
+
+			$results_data_iec60870_line_dfs = $db->iec60870_line_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_iec60870_line_dfs as $results_data_iec60870_line_df) {
+					$z = $z +1;
+					for ($i = $startColumn_iec60870_line_df; $i < $numCols_iec60870_line_df; $i ++) {
+						$meta = $sth_iec60870_line_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_iec60870_line_df;	// คอลัมภ์ที่ $col ของ Excel
+
+						if ($meta['name'] == "NAME") {
+							//B03IEC_01
+							$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+							$value = "B".$tmpBranchCode."IEC_".$tmpZoneCode;
+						} else if($meta['name'] == "EQUIPMENT_MAN"){
+							//EQP104_0301
+							$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_line_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+						 	$value = "EQP104_".$tmpBranchCode.$tmpZoneCode;
+						} else {
+							$tmpValue = $results_data_iec60870_line_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+
+						
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+		/* Set Title */
+		// Rename worksheet
+		$objPHPExcel->getActiveSheet()->setTitle('IEC60870_LINE_DF');
+
+		
+
+	    /*  IEC60870_STATION_DF Partial */
+	    		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_IEC60870_STATION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC60870_STATION_DF');
+		$objPHPExcel->addSheet($objPHPExcel_IEC60870_STATION_DF_Worksheet, $sheetCount);
+		$objPHPExcel_IEC60870_STATION_DF_Worksheet->setTitle('IEC60870_STATION_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Quickload for MODBUS (MODBUS_STATION_DF) */
+        /* ************************* */
+
+		/* Create Header */
+		//$reports = $db->modbus_station_df[1];
+		//$results_header = $db->opcdac_station_df()->where("templates = ?", "header_template")->fetch();
+		$results_header_iec60870_station_df = $db->iec60870_station_df()->where("templates = ?", "header_template")->fetch();
+
+        $sth_iec60870_station_df = $pdo->prepare("SELECT * FROM iec60870_station_df WHERE templates = 'header_template'");
+        $sth_iec60870_station_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_iec60870_station_df = $sth_iec60870_station_df->columnCount();
+		$startRow_iec60870_station_df = 2;
+		$startColumn_iec60870_station_df = 4;
+
+		for ($i = $startColumn_iec60870_station_df; $i < $numCols_iec60870_station_df; $i ++) {
+			$meta = $sth_iec60870_station_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_iec60870_station_df;
+			$value = $results_header_iec60870_station_df[$meta['name']];
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_iec60870_station_df; $j < $numDM+$startRow_iec60870_station_df; $j++) { 
+
+			//$results_data_opcdac_station_dfs = $db->opcdac_station_df()->where("templates = ? and rtu_install = ? and rtu_modbus_brand = ?", "data_template", $paramRtuInstall, $paramRtuModbusBrand);
+			$results_data_iec60870_station_dfs = $db->iec60870_station_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_iec60870_station_dfs as $results_data_iec60870_station_df) {
+					$z = $z +1;
+					for ($i = $startColumn_iec60870_station_df; $i < $numCols_iec60870_station_df; $i ++) {
+						$meta = $sth_iec60870_station_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_iec60870_station_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						 if ($meta['name'] == "NAME") {
+						 	// DM-03-01-01-01
+						 	$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$value = $tmpDM_Name;
+
+						 } else if($meta['name'] == "DESCRIPTION") {
+						 	// DM-03-01-01-01
+						 	$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$value = $tmpDM_Name;
+
+						 } else if ($meta['name'] == "LINE") {
+						 	// B03IEC
+					 		$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$tmpZoneCode = substr($tmpDM_Name, 6, 2);
+							$value = "B".$tmpBranchCode."IEC_".$tmpZoneCode;
+
+						 } else if($meta['name'] == "LINE_1_DEVICE") {
+						 	// DM-03-01-01-01
+						 	$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_station_df]->name;
+							$value = $tmpDM_Name;
+							
+						 } else {
+						 	$tmpValue = $results_data_iec60870_station_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						 }
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+
+
+
+
+
+	    /*  IEC60870_POINT_DF Partial */
+	    		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_IEC60870_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC60870_POINT_DF');
+		$objPHPExcel->addSheet($objPHPExcel_IEC60870_POINT_DF_Worksheet, $sheetCount);
+		$objPHPExcel_IEC60870_POINT_DF_Worksheet->setTitle('IEC60870_POINT_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Quickload for IEC60870 (IEC60870_POINT_DF) */
+        /* ************************* */
+
+		/* Create Header */
+		//$reports = $db->iec60870_station_df[1];
+		//$results_header = $db->iec60870_station_df()->where("templates = ?", "header_template")->fetch();
+		$results_header_iec60870_point_df = $db->iec60870_point_df()->where("templates = ?", "header_template")->fetch();
+
+        $sth_iec60870_point_df = $pdo->prepare("SELECT * FROM iec60870_point_df WHERE templates = 'header_template'");
+        $sth_iec60870_point_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_iec60870_point_df = $sth_iec60870_point_df->columnCount();
+		$startRow_iec60870_point_df = 2;
+		$startColumn_iec60870_point_df = 4;
+
+		for ($i = $startColumn_iec60870_point_df; $i < $numCols_iec60870_point_df; $i ++) {
+			$meta = $sth_iec60870_point_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_iec60870_point_df;
+			$tmpValue = $results_header_iec60870_point_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+
+		/* Create Details */
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_iec60870_point_df; $j < $numDM+$startRow_iec60870_point_df; $j++) { 
+
+			$results_data_iec60870_point_dfs = $db->iec60870_point_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_iec60870_point_dfs as $results_data_iec60870_point_df) {
+					$z = $z +1;
+					for ($i = $startColumn_iec60870_point_df; $i < $numCols_iec60870_point_df; $i ++) {
+						$meta = $sth_iec60870_point_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_iec60870_point_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						 if ($meta['name'] == "STATION") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_point_df]->name;
+							$tmpBranchCode = substr($tmpDM_Name, 3, 2);
+							$value = $tmpDM_Name;
+
+						 } else if ($meta['name'] == "NAME") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_iec60870_point_df]->name;
+							$value = $tmpDM_Name.":".$results_data_iec60870_point_df['POINT'];
+
+						 } else {
+							$tmpValue = $results_data_iec60870_point_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						 }
+
+						 //$value = $results_data_iec60870_point_df[$meta['name']];
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+			}
+
+		}
+
+
+
+
+
+
+
+	    /*  STATION_DF Partial */
+	    		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_SECTION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'SECTION_DF');
+		$objPHPExcel->addSheet($objPHPExcel_SECTION_DF_Worksheet, $sheetCount);
+		$objPHPExcel_SECTION_DF_Worksheet->setTitle('SECTION_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_section_df = $db->section_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_section_df = $pdo->prepare("SELECT * FROM section_df WHERE templates = 'header_template'");
+		$sth_section_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_section_df = $sth_section_df->columnCount();
+		$startRow_section_df = 2;
+		$startColumn_section_df = 4;
+
+		for ($i = $startColumn_section_df; $i < $numCols_section_df; $i++) {
+			$meta = $sth_section_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_section_df;
+			$tmpValue = $results_header_section_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_section_df; $j < $numDM+$startRow_section_df; $j++) { 
+
+			$results_data_section_dfs = $db->section_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_section_dfs as $results_data_section_df) {
+
+					$z = $z +1;
+					for ($i = $startColumn_section_df; $i < $numCols_section_df; $i ++) {
+						$meta = $sth_section_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_section_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "SECTION_NAME") {
+							$value = $paramListDM[$j-$startRow_section_df]->name;
+						} else if($meta['name'] == "NAME"){
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208
+								$tmpDM_Name = $paramListDM[$j-$startRow_section_df]->name;
+								$value = "PRODUCTION.WTDC.".$tmpDM_Name;
+							} else {
+								// SERVICE.B54.DM-54-04-05-01
+								$tmpDM_Name = $paramListDM[$j-$startRow_section_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name;
+							}
+
+						} else if($meta['name'] == "DESCRIPTION"){
+							
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_section_df[$meta['name']];
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_section_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $tmpBranch_Name;
+							}
+
+						} else {
+							$tmpValue = $results_data_section_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+
+			}
+
+		}
+
+
+
+
+	    /*  ITEM_DF Partial */
+	    		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_ITEM_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'ITEM_DF');
+		$objPHPExcel->addSheet($objPHPExcel_ITEM_DF_Worksheet, $sheetCount);
+		$objPHPExcel_ITEM_DF_Worksheet->setTitle('ITEM_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_item_df = $db->item_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_item_df = $pdo->prepare("SELECT * FROM item_df WHERE templates = 'header_template'");
+		$sth_item_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_item_df = $sth_item_df->columnCount();
+		$startRow_item_df = 2;
+		$startColumn_item_df = 4;
+
+		for ($i = $startColumn_item_df; $i < $numCols_item_df; $i++) {
+			$meta = $sth_item_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_item_df;
+			$tmpValue = $results_header_item_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_item_df; $j < $numDM+$startRow_item_df; $j++) { 
+
+			$results_data_item_dfs = $db->item_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_item_dfs as $results_data_item_df) {
+
+					$z = $z +1;
+					for ($i = $startColumn_item_df; $i < $numCols_item_df; $i ++) {
+						$meta = $sth_item_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_item_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "INSTALL") {
+							$value = $paramRtuInstall;
+						} else if ($meta['name'] == "UNIT") {
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "WTDC";
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $tmpBranch_Name;
+							}
+
+						} else if ($meta['name'] == "NAME") {
+							// PRODUCTION.WTDC.U208.FT
+							// SERVICE.B01.DM-01-06-03-02.PT_INT_HI_SP
+							if($paramRtuInstall == "PRODUCTION") {
+								$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $paramRtuInstall.".WTDC".".".$tmpDM_Name.".".$results_data_item_df['TAG'];
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".".$results_data_item_df['TAG'];
+							}
+
+
+						} else if ($meta['name'] == "STATION") {
+							
+								/*  MODBUS_LINE_DF Partial */
+							    							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+							$tmpBranch_Name = substr($tmpDM_Name, 3, 2);
+
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
+								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
+								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
+								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
+								if ($results_data_item_df['TAG'] == "COMM_STS"){
+									$value = "";
+								} else {
+									$value = $tmpDM_Name;
+								}
+
+							} else if (($paramFastToolsDestination == "MOXA") || ($paramFastToolsDestination == "WAGO")) {
+								// Define STATION for MOXA, Template from "DM-01-06-03-02"
+								// Define STATION for WAGO, Template from "DM-02-08-02-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT") 
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+										$value = $tmpDM_Name;
+								} else {
+									$value = "";
+								}
+							} else if ($paramFastToolsDestination == "ABB AC500") {
+								// Define STATION for ABB AC500, Template from "DM-01-06-01-01"
+								if (($results_data_item_df['TAG'] == "COMM_STS") || ($results_data_item_df['TAG'] == "PT_EXT_HI_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_HI_SP") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_SP")){
+										$value = "";
+								} else {
+									$value = $tmpDM_Name;
+								}
+							} else if ($paramFastToolsDestination == "PGIM_BRANCH") {
+								// Define STATION for PGIM_BRANCH, Template from "DM-02-15-01-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "ON") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+									$value = "B".$tmpBranch_Name."_PGIM";
+								} else {
+									$value = "";
+								}
+							} else if ($paramFastToolsDestination == "DCXII") {
+								// Define STATION for DCXII, Template from "DM-02-02-08-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+										$value = "DCXII";
+								} else {
+									$value = "N/A";
+								}
+							} else if ($paramFastToolsDestination == "PGIM_WTDC") {
+								// Define STATION for PGIM_WTDC, Template from "U208"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "PT")){
+										$value = "WTDC_PGIM";
+								} else {
+									$value = "N/A";
+								}
+							}
+
+
+
+
+
+						} else if ($meta['name'] == "POINT") {
+							
+								/*  MODBUS_LINE_DF Partial */
+							    							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
+								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
+								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
+								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
+								if ($results_data_item_df['TAG'] == "COMM_STS"){
+									$value = "";
+								} else {
+									$value = $results_data_item_df['TAG'];
+								}
+							} else if (($paramFastToolsDestination == "MOXA") || ($paramFastToolsDestination == "WAGO")) {
+								// Define STATION for MOXA, Template from "DM-01-06-03-02"
+								// Define STATION for WAGO, Template from "DM-02-08-02-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT") 
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+										$value = $results_data_item_df['TAG'];
+								} else {
+									$value = "";
+								}
+							} else if ($paramFastToolsDestination == "ABB AC500") {
+								// Define STATION for ABB AC500, Template from "DM-01-06-01-01"
+								if (($results_data_item_df['TAG'] == "COMM_STS") || ($results_data_item_df['TAG'] == "PT_EXT_HI_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_HI_SP") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_SP")){
+										$value = "";
+								} else {
+									$value = $results_data_item_df['TAG'];
+								}
+							} else if ($paramFastToolsDestination == "PGIM_BRANCH") {
+								// Define STATION for PGIM_BRANCH, Template from "DM-02-15-01-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "ON") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+									$value = $tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "";
+								}
+							} else if ($paramFastToolsDestination == "DCXII") {
+								// Define STATION for DCXII, Template from "DM-02-02-08-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+										$value = $tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "N/A";
+								}
+							} else if ($paramFastToolsDestination == "PGIM_WTDC") {
+								// Define STATION for PGIM_WTDC, Template from "U208"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "PT")){
+										$value = $tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "N/A";
+								}
+							}
+
+						} else if ($meta['name'] == "POINT_NAME") {
+							
+								/*  MODBUS_LINE_DF Partial */
+							    							$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+
+							if (( $paramFastToolsDestination == "B&R X20")||($paramFastToolsDestination == "YOKOGAWA FCJ")||($paramFastToolsDestination == "SIXNET")||($paramFastToolsDestination == "ABB CTU800")) {
+								// Define STATION for B&R X20, Template from "DM-01-04-04-01"
+								// Define STATION for YOKOGAWA FCJ, Template from "DM-01-06-02-03"
+								// Define STATION for SIXNET, Template from "DM-04-03-01-01"
+								if ($results_data_item_df['TAG'] == "COMM_STS"){
+									$value = ":";
+								} else {
+									$value = $tmpDM_Name.":".$results_data_item_df['TAG'];
+								}
+							} else if (($paramFastToolsDestination == "MOXA") || ($paramFastToolsDestination == "WAGO")) {
+								// Define STATION for MOXA, Template from "DM-01-06-03-02"
+								// Define STATION for WAGO, Template from "DM-02-08-02-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+																		   || ($results_data_item_df['TAG'] == "PT_EXT") 
+																		   || ($results_data_item_df['TAG'] == "PT_INT") 
+																		   || ($results_data_item_df['TAG'] == "TOTAL")){
+									$value = $tmpDM_Name.":".$results_data_item_df['TAG'];
+								} else {
+									$value = $results_data_item_df[$meta['name']];
+								}
+							} else if ($paramFastToolsDestination == "ABB AC500") {
+								// Define STATION for ABB AC500, Template from "DM-01-06-01-01"
+								if (($results_data_item_df['TAG'] == "COMM_STS") || ($results_data_item_df['TAG'] == "PT_EXT_HI_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_HI_SP") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_ALM") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT_LO_SP")){
+										$value = ":";
+								} else {
+									$value = $tmpDM_Name.":".$results_data_item_df['TAG'];
+								}
+							} else if ($paramFastToolsDestination == "PGIM_BRANCH") {
+								// Define STATION for PGIM_BRANCH, Template from "DM-02-15-01-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "ON") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+									$value = "B".$tmpBranch_Name."_PGIM".":".$tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = ":";
+								}
+							} else if ($paramFastToolsDestination == "DCXII") {
+								// Define STATION for DCXII, Template from "DM-02-02-08-01"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "LOG_FREQ") 
+										|| ($results_data_item_df['TAG'] == "PT_EXT") 
+										|| ($results_data_item_df['TAG'] == "PT_INT")
+										|| ($results_data_item_df['TAG'] == "TOTAL")){
+										$value = "DCXII:".$tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "N/A";
+								}
+							} else if ($paramFastToolsDestination == "PGIM_WTDC") {
+								// Define STATION for PGIM_WTDC, Template from "U208"
+								if (($results_data_item_df['TAG'] == "FT") || ($results_data_item_df['TAG'] == "PT")){
+										$value = "WTDC_PGIM:".$tmpDM_Name.".".$results_data_item_df['TAG'];
+								} else {
+									$value = "N/A";
+								}
+							}
+
+						} else if ($meta['name'] == "AOI_1") {
+							
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_item_df[$meta['name']];
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_item_df]->name;
+								$tmpDatabaseAOI_Name = "DB".substr($tmpDM_Name, 3, 2);
+
+								if ($results_data_item_df['TAG'] == "LOG_FREQ"){
+									$value = $tmpDatabaseAOI_Name;
+								} else {
+									$value = $results_data_item_df[$meta['name']];
+								}
+							}
+
+						} else {
+							$tmpValue = $results_data_item_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+
+			}
+
+		}
+	    /*  OBJECT_DF Partial */
+	    		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_OBJECT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'OBJECT_DF');
+		$objPHPExcel->addSheet($objPHPExcel_OBJECT_DF_Worksheet, $sheetCount);
+		$objPHPExcel_OBJECT_DF_Worksheet->setTitle('OBJECT_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_object_df = $db->object_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_object_df = $pdo->prepare("SELECT * FROM object_df WHERE templates = 'header_template'");
+		$sth_object_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_object_df = $sth_object_df->columnCount();
+		$startRow_object_df = 2;
+		$startColumn_object_df = 4;
+
+		for ($i = $startColumn_object_df; $i < $numCols_object_df; $i++) {
+			$meta = $sth_object_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_object_df;
+			$tmpValue = $results_header_object_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_object_df; $j < $numDM+$startRow_object_df; $j++) { 
+
+			$results_data_object_dfs = $db->object_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_object_dfs as $results_data_object_df) {
+
+					$z = $z +1;
+					for ($i = $startColumn_object_df; $i < $numCols_object_df; $i ++) {
+						$meta = $sth_object_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_object_df;	// คอลัมภ์ที่ $col ของ Excel
+
+
+						if ($meta['name'] == "UNIT") {
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "WTDC";
+							} else {
+								$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+								$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+								$value = $tmpBranch_Name;
+							}
+
+						} else if ($meta['name'] == "TAG") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$value = $tmpDM_Name;
+
+						} else if ($meta['name'] == "DESCRIPTION") {
+							
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+								$value = $paramFastToolsDestination;
+							}
+
+						} else if ($meta['name'] == "NAME") {
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208.U208
+								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".".$tmpDM_Name;
+							} else {
+								//SERVICE.B01.DM-01-06-03-02.DM-01-06-03-02
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".".$tmpDM_Name;
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_1") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208.FT
+								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".FT";
+							} else {
+								// SERVICE.B01.DM-01-06-03-02.FT
+								$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+							}
+
+
+						} else if ($meta['name'] == "ATTR_VALUE_2") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_HI_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// PRODUCTION.WTDC.U208.PT
+								$value = $paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_FT_HI_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_ALM";
+								}
+								
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_3") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_LO_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_FT_LO_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_ALM";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_4") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_HI_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_FT_HI_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_HI_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_5") {
+
+							//SERVICE.B01.DM-01-06-03-02.FT_LO_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT_LO_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_6") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_FT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
+								// }
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_7") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_HI_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_ALM";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_8") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_LO_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_ALM";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_9") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_HI_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_HI_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_HI_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_10") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_INT_LO_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_INT_LO_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT_LO_SP";
+								}
+							}
+
+						} else if ($meta['name'] == "ATTR_VALUE_11") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "ABB CTU800") {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_12") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_HI_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_ALM";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_13") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_LO_ALM
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_ALM";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_ALM";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_14") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_HI_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_HI_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_HI_SP";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_15") {
+
+							//SERVICE.B01.DM-01-06-03-02.PT_EXT_LO_SP
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if(($paramFastToolsDestination == "DCXII")||($paramFastToolsDestination == "ABB CTU800")) {
+									$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT_LO_SP";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_16") {
+
+							//SERVICE.B01.DM-01-06-03-02.TOTAL
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".TOTAL";
+								// }
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_17") {
+
+							//SERVICE.B01.DM-01-06-03-02.LOG_FREQ
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								// if($paramFastToolsDestination == "DCXII") {
+								// 	$value = "OTHER.DUMMY.DUMMY_PT_EXT_LO_SP";
+								// } else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".LOG_FREQ";
+								// }
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_18") {
+
+							//SERVICE.B01.DM-01-06-03-02.COMM_STS
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "PGIM_BRANCH") {
+									$value = "OTHER.DUMMY.DUMMY_COMM_STS";
+								} else if($paramFastToolsDestination == "DCXII") {
+									$value = "OTHER.DUMMY.DUMMY_COMM_STS";
+								} else {
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".COMM_STS";
+								}
+							}
+							
+
+						} else if ($meta['name'] == "ATTR_VALUE_19") {
+
+							//SERVICE.B01.DM-01-06-03-02.COMM_STS
+							$tmpDM_Name = $paramListDM[$j-$startRow_object_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							if($paramRtuInstall == "PRODUCTION") {
+								$value = "";
+								//$value = $results_data_object_df[$meta['name']];
+							} else {
+
+								if($paramFastToolsDestination == "PGIM_BRANCH") {
+									// SERVICE.B02.DM-02-15-01-01.ON
+									$value = $paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".ON";
+								} else {
+									$value = "OTHER.DUMMY.DUMMY_ON";
+								}
+							}
+							
+
+						} else {
+							$tmpValue = $results_data_object_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+
+			}
+
+		}
+
+
+
+
+	    /*  ITEM_HIS_DF Partial */
+	    		$sheetCount = $objPHPExcel->getSheetCount();
+
+		/* Create Worksheet พร้อมกำหนดชื่อ */
+		$objPHPExcel_ITEM_HIS_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'ITEM_HIS_DF');
+		$objPHPExcel->addSheet($objPHPExcel_ITEM_HIS_DF_Worksheet, $sheetCount);
+		$objPHPExcel_ITEM_HIS_DF_Worksheet->setTitle('ITEM_HIS_DF');
+
+		/* กำหนดให้เป็น ActiveWorkSheet */
+		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$objPHPExcel->setActiveSheetIndex($sheetCount);
+
+
+		/* Create Header */
+		//$reports = $db->modbus_point_df[1];
+		$results_header_item_his_df = $db->item_his_df()->where("templates = ?", "header_template")->fetch();
+
+		$sth_item_his_df = $pdo->prepare("SELECT * FROM item_his_df WHERE templates = 'header_template'");
+		$sth_item_his_df->execute();
+		/* Count the number of columns in the (non-existent) result set */
+		$numCols_item_his_df = $sth_item_his_df->columnCount();
+		$startRow_item_his_df = 2;
+		$startColumn_item_his_df = 4;
+
+		for ($i = $startColumn_item_his_df; $i < $numCols_item_his_df; $i++) {
+			$meta = $sth_item_his_df->getColumnMeta($i);
+
+			$row = 1;		// แถวที่ 1 ของ Excel
+			$col = $i-$startColumn_item_his_df;
+			$tmpValue = $results_header_item_his_df[$meta['name']];
+			$value = trim(preg_replace('/\t+/', '', $tmpValue));
+			$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+		}
+
+
+
+
+		/* Create Details */
+
+		$numDM = count($paramListDM);  // จำนวน DM
+		$z=1;
+		for ($j=$startRow_item_his_df; $j < $numDM+$startRow_item_his_df; $j++) { 
+
+			$results_data_item_his_dfs = $db->item_his_df()->where("templates = ? and rtu_install = ? and fasttools_destination = ?", "data_template", $paramRtuInstall, $paramFastToolsDestination);
+
+			$k = 0;  // จำนวนแภวของ Template
+			foreach ($results_data_item_his_dfs as $results_data_item_his_df) {
+
+					$z = $z +1;
+					for ($i = $startColumn_item_his_df; $i < $numCols_item_his_df; $i ++) {
+						$meta = $sth_item_his_df->getColumnMeta($i);
+						$row = $z;		// แถวที่ $row ของ Excel
+						$col = $i-$startColumn_item_his_df;	// คอลัมภ์ที่ $col ของ Excel
+
+// TEN_SECONDS:SERVICE.B01.DM-01-06-03-02.FT
+// TEN_SECONDS:SERVICE.B01.DM-01-06-03-02.PT_INT
+// TEN_SECONDS:SERVICE.B01.DM-01-06-03-02.PT_EXT
+
+						if ($meta['name'] == "NAME") {
+
+							$tmpDM_Name = $paramListDM[$j-$startRow_item_his_df]->name;
+							$tmpBranch_Name = "B".substr($tmpDM_Name, 3, 2);
+
+							$tmpValue = $results_data_item_his_df[$meta['name']];
+
+							if($paramRtuInstall == "PRODUCTION") {
+								// TEN_SECONDS:PRODUCTION.WTDC.U208.FT
+								if ((substr($tmpValue, -2) == "FT")) {
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".WTDC.".$tmpDM_Name.".FT";
+								} else if ((substr($tmpValue, -2) == "PT")) {
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".WTDC.".$tmpDM_Name.".PT";
+								} else {
+									$value = "N/A";
+								}
+
+							} else if($paramRtuInstall == "ABB CTU800"){
+
+								if ((substr($tmpValue, -2) == "FT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.FT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+								} else if ((substr($tmpValue, -6) == "PT_INT")) {
+									// TEN_SECONDS:SERVICE.B03.DM-03-01-03-01.PT_INT
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
+								}
+
+							} else {
+								// TEN_SECONDS:SERVICE.B02.DM-02-02-08-01.PT_EXT
+								if ((substr($tmpValue, -2) == "FT")) {
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".FT";
+								} else if ((substr($tmpValue, -6) == "PT_INT")) {
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_INT";
+								} else if ((substr($tmpValue, -6) == "PT_EXT")) {
+									$value = $results_data_item_his_df['GROUP_NAME'].":".$paramRtuInstall.".".$tmpBranch_Name.".".$tmpDM_Name.".PT_EXT";
+								}
+
+							}
+
+							
+
+						} else {
+							$tmpValue = $results_data_item_his_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
+						}
+						
+						
+
+						$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $value);
+					}
+				$k = $k +1;
+
+			}
+
+		}
+
+
+
+
+
+
+		/* ************************* */
+        /* เริ่มกระบวนการสร้าง Excel file */
+        /* ************************* */
+
+		// Set document properties
+		$objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
+									 ->setLastModifiedBy("Maarten Balliauw")
+									 ->setTitle("Office 2007 XLSX Test Document")
+									 ->setSubject("Office 2007 XLSX Test Document")
+									 ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+									 ->setKeywords("office 2007 openxml php")
+									 ->setCategory("Test result file");
+
+
+		// Redirect output to a client’s web browser (Excel5)
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="01simple.xls"');
+		header('Cache-Control: max-age=0');
+		// If you're serving to IE 9, then the following may be needed
+		header('Cache-Control: max-age=1');
+
+		// If you're serving to IE over SSL, then the following may be needed
+		header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+		header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+		header ('Pragma: public'); // HTTP/1.0
+
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$date = new DateTime();
+		$fileName = 'Quickload_for_IEC60870('.$paramFastToolsDestination.')'.'_'.date("Y-m-d").'_'.$date->getTimestamp().'.xls';
+		$filePath = '../../files/'.$fileName;
+		$objWriter->save($filePath);
+
+
+
+	    /* ************************* */
+	    /* เริ่มกระบวนการส่งค่ากลับ */
+	    /* ************************* */
+	    $reports[] = array(
+	    		"filename" => $fileName,
+	    		"path" => url()."/scada-it/build/files/".$fileName
+	    	);
+
+
+	    $resultText = "success";
+
+	    $reportResult = array("result" =>  $resultText, "rows" => $reports);
+	    //$reportResult = array("result" =>  $resultText);
+
+	    $app->response()->header("Content-Type", "application/json");
+	    echo json_encode($reportResult);
 
 
     }
@@ -3719,6 +5143,92 @@
          $reportResult = array("result" =>  $resultText,
                                    "ip_compared_duplicate" => $ip_compared_duplicate, 
                                    "meterCode_compared_duplicate" => $meterCode_compared_duplicate, 
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+
+
+    }
+    
+	/**
+	 *
+	 * @apiName AddNewRtuInfoManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/addNewRtuInfoManager/ AddNewRtuInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_scada_station_df, tb_main01_user_rtu_info, tb_main02_scada_rtu_info
+	 *
+	 *
+	 */
+    function addNewRtuInfoManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             $paramListRTU = $result->listRTU;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+
+
+          $reports = array();
+          $numDM = count($paramListRTU);  // จำนวน DM
+
+          for ($i=0; $i < $numDM; $i++) { 
+
+               $tmpBranchCode = $paramListRTU[$i]->branch_code;
+               $tmpZoneCode = $paramListRTU[$i]->zone_code;
+               $tmpDmaCode = $paramListRTU[$i]->dma_code;
+               $tmpDmCode = $paramListRTU[$i]->dm_code;
+               $tmpIP = $paramListRTU[$i]->ip;
+               $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+               $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
+
+
+               $reports[] = array(
+                  "branch_code" => $tmpBranchCode,
+                  "zone_code" => $tmpZoneCode,
+                  "dma_code" => $tmpDmaCode,
+                  "dm_code" => $tmpDmCode, 
+                  "ip" => $tmpIP,
+                  "logger_code" => $tmpLoggerCode,
+                  "rtu_status" => $tmpRtuStatus
+                );
+          }
+
+
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+         $resultText = "success";
+
+         $reportResult = array("result" =>  $resultText,
                                    "rows" => $reports);
 
          $app->response()->header("Content-Type", "application/json");
