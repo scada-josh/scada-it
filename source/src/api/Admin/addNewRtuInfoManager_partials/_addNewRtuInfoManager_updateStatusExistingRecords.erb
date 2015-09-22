@@ -1,0 +1,19 @@
+                // ค้นหาจากฐานข้อมูล (ตาราง "tb_scada_host_info")
+                //$tb_scada_host_info_result = $db->tb_scada_host_info()->where("host_name = ? ", $tmpDmCode)->fetch();
+                $tb_scada_host_info_result = $db->tb_scada_host_info()->where("host_name = ? ", $tmpDmCode);
+
+                $result_updateScadaInfo = 0;
+
+                if ($tb_scada_host_info_result !== false) {
+
+                    $str = 0;
+
+                    $data = array(
+                      "status" => $str
+                    );
+                    // Update Existing Records
+                    $result_updateScadaInfo = $tb_scada_host_info_result->update($data);
+
+                } else {
+
+                }

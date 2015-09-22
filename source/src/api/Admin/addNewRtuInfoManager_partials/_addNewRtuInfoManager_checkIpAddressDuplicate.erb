@@ -1,0 +1,11 @@
+                // Check IP Address Duplicate???
+                $resons = array();             // เหตุผลต่างๆ เช่น IP ซ้ำหรือไม่? , DM เคยมีอยู่แล้วหรือเปล่า?
+                $ip_duplicates = array();
+                // $ip_repeat_results = $db->tb_scada_host_info()->where("ip = ? and status = 1 and ip_host_name != '10.50.130.247_DM-01-01-04-01'", $tmpIP);
+                $ip_duplicate_results = $db->tb_scada_host_info()->where("ip = ? and status = 1 and ip_host_name != ?", $tmpIP, $tmpIP."_".$tmpDmCode);
+                // $ip_repeat_results = $db->tb_scada_host_info()->where("ip = ? and status = 1", $tmpIP);
+                foreach ($ip_duplicate_results as $ip_duplicate_result) {
+                  $ip_duplicates[] = array(
+                    "message" => "IP ซ้ำกับ ".$ip_duplicate_result["host_name"]." (id : ".$ip_duplicate_result["id"].")"
+                  );
+                }

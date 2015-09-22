@@ -1,0 +1,13 @@
+
+    // Insert or Update User Records
+    $insertUpdateUser_result = $db->tb_main01_user_rtu_info()->insert_update(
+                array("meter_code" => $tmpDmCode), // unique key
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus)// update values otherwise
+    );

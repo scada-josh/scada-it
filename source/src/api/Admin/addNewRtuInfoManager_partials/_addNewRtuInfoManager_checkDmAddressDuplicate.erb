@@ -1,0 +1,8 @@
+                // Check DM Duplicate???
+                $dm_duplicates = array();
+                $dm_duplicate_results = $db->tb_scada_host_info()->where("host_name = ? and status = 1 and ip_host_name != ?", $tmpDmCode, $tmpIP."_".$tmpDmCode);
+                foreach ($dm_duplicate_results as $dm_duplicate_result) {
+                  $dm_duplicates[] = array(
+                    "message" => "DM ซ้ำกับ ".$dm_duplicate_result["host_name"]." (id : ".$dm_duplicate_result["id"].")"
+                  );
+                }

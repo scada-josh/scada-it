@@ -1,0 +1,26 @@
+                // ค้นหา Logger Code จากฐานข้อมูล (ตาราง "tb_main02_scada_rtu_info")
+                $scada_rtu_info_result = $db->tb_main02_scada_rtu_info()->where("meter_code = ? ", $tmpDmCode)->fetch();
+                // ค้นหารายละเอียด Logger Code จากฐานข้อมูล (ตาราง "tb_rtu_general_info")
+                $rtu_general_info_result = $db->tb_rtu_general_info()->where("LOGGER_CODE_SCADA = ? ", $tmpLoggerCode)->fetch();
+                //#B01 B&R  X20 PSTN
+                if (substr($tmpDmCode,0,2) == "DM") {
+                  $tmpBranchName = "B".substr($tmpDmCode,3,2);
+                  $tmpComments = "#".$tmpBranchName."  ".$rtu_general_info_result["BRAND"]." ".$scada_rtu_info_result["logger_code"]." ".$scada_rtu_info_result["comm"];
+                  $tmpSections = "# For RTU";
+                } else {
+                  $tmpBranchName = "";
+                  $tmpComments = "";
+                  $tmpSections = "";
+                }
+
+                // Insert or Update New Records
+                $insertUpdate_result = $db->tb_scada_host_info()->insert_update(
+                            array("ip_host_name" => $tmpIP."_".$tmpDmCode), // unique key
+                            array("sections" => $tmpSections, 
+                                  "ip"  => $tmpIP, 
+                                  "host_name"  => $tmpDmCode,
+                                  "comments"  => $tmpComments, // #B01 B&R  X20 GPRS
+                                  "status"  => $tmpRtuStatus), // insert values if the row doesn't exist
+                            array("comments"  => $tmpComments, // #B01 B&R  X20 GPRS
+                                  "status"  => $tmpRtuStatus)// update values otherwise
+                );

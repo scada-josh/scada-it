@@ -40,8 +40,13 @@
 
 
 
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+
           $reports = array();
           $numDM = count($paramListRTU);  // จำนวน DM
+          
 
           for ($i=0; $i < $numDM; $i++) { 
 
@@ -51,18 +56,54 @@
                $tmpDmCode = $paramListRTU[$i]->dm_code;
                $tmpIP = $paramListRTU[$i]->ip;
                $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+               $tmpComm = $paramListRTU[$i]->comm;
                $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
+               
 
+               /*  Update Existing Records (tb_scada_host_info) Partial */
+               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_updateStatusExistingRecords" %>
+               /*  Insert/Update Records (tb_scada_host_info) Partial */
+               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_insertUpdateHostTableRecords" %>
+               /*  Check IP Address Duplicate (tb_scada_host_info) Partial */
+               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_checkIpAddressDuplicate" %>
+               /*  Check DM Duplicate (tb_scada_host_info) Partial */
+               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_checkDmAddressDuplicate" %>
+               
+               /*  Insert/Update Records (tb_main01_user_rtu_info) Partial */
+               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_insertUpdateUserTableRecords" %>
+               /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
+               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_insertUpdateScadaTableRecords" %>
+
+
+
+
+                $resons[] = array(
+                    "ip_duplicate" => $ip_duplicates,
+                    "dm_duplicate" => $dm_duplicates
+                );
+
+
+               // $reports[] = array(
+               //    "branch_code" => $tmpBranchCode,
+               //    "zone_code" => $tmpZoneCode,
+               //    "dma_code" => $tmpDmaCode,
+               //    "dm_code" => $tmpDmCode, 
+               //    "ip" => $tmpIP,
+               //    "logger_code" => $tmpLoggerCode,
+               //    "comm" => $tmpComm,
+               //    "rtu_status" => $tmpRtuStatus,
+               //    "result" => $result_updateScadaInfo,
+               //    "result_query" => $tb_scada_host_info_result
+               //  );
 
                $reports[] = array(
-                  "branch_code" => $tmpBranchCode,
-                  "zone_code" => $tmpZoneCode,
-                  "dma_code" => $tmpDmaCode,
-                  "dm_code" => $tmpDmCode, 
+                  "dm_code" => $tmpDmCode,
                   "ip" => $tmpIP,
-                  "logger_code" => $tmpLoggerCode,
-                  "rtu_status" => $tmpRtuStatus
+                  "check_with_existing_result" => $resons
                 );
+
+
+
           }
 
 

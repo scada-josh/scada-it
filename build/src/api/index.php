@@ -5196,8 +5196,13 @@
 
 
 
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+
           $reports = array();
           $numDM = count($paramListRTU);  // จำนวน DM
+          
 
           for ($i=0; $i < $numDM; $i++) { 
 
@@ -5207,18 +5212,138 @@
                $tmpDmCode = $paramListRTU[$i]->dm_code;
                $tmpIP = $paramListRTU[$i]->ip;
                $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+               $tmpComm = $paramListRTU[$i]->comm;
                $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
+               
 
+               /*  Update Existing Records (tb_scada_host_info) Partial */
+                               // ค้นหาจากฐานข้อมูล (ตาราง "tb_scada_host_info")
+                //$tb_scada_host_info_result = $db->tb_scada_host_info()->where("host_name = ? ", $tmpDmCode)->fetch();
+                $tb_scada_host_info_result = $db->tb_scada_host_info()->where("host_name = ? ", $tmpDmCode);
+
+                $result_updateScadaInfo = 0;
+
+                if ($tb_scada_host_info_result !== false) {
+
+                    $str = 0;
+
+                    $data = array(
+                      "status" => $str
+                    );
+                    // Update Existing Records
+                    $result_updateScadaInfo = $tb_scada_host_info_result->update($data);
+
+                } else {
+
+                }
+               /*  Insert/Update Records (tb_scada_host_info) Partial */
+                               // ค้นหา Logger Code จากฐานข้อมูล (ตาราง "tb_main02_scada_rtu_info")
+                $scada_rtu_info_result = $db->tb_main02_scada_rtu_info()->where("meter_code = ? ", $tmpDmCode)->fetch();
+                // ค้นหารายละเอียด Logger Code จากฐานข้อมูล (ตาราง "tb_rtu_general_info")
+                $rtu_general_info_result = $db->tb_rtu_general_info()->where("LOGGER_CODE_SCADA = ? ", $tmpLoggerCode)->fetch();
+                //#B01 B&R  X20 PSTN
+                if (substr($tmpDmCode,0,2) == "DM") {
+                  $tmpBranchName = "B".substr($tmpDmCode,3,2);
+                  $tmpComments = "#".$tmpBranchName."  ".$rtu_general_info_result["BRAND"]." ".$scada_rtu_info_result["logger_code"]." ".$scada_rtu_info_result["comm"];
+                  $tmpSections = "# For RTU";
+                } else {
+                  $tmpBranchName = "";
+                  $tmpComments = "";
+                  $tmpSections = "";
+                }
+
+                // Insert or Update New Records
+                $insertUpdate_result = $db->tb_scada_host_info()->insert_update(
+                            array("ip_host_name" => $tmpIP."_".$tmpDmCode), // unique key
+                            array("sections" => $tmpSections, 
+                                  "ip"  => $tmpIP, 
+                                  "host_name"  => $tmpDmCode,
+                                  "comments"  => $tmpComments, // #B01 B&R  X20 GPRS
+                                  "status"  => $tmpRtuStatus), // insert values if the row doesn't exist
+                            array("comments"  => $tmpComments, // #B01 B&R  X20 GPRS
+                                  "status"  => $tmpRtuStatus)// update values otherwise
+                );
+               /*  Check IP Address Duplicate (tb_scada_host_info) Partial */
+                               // Check IP Address Duplicate???
+                $resons = array();             // เหตุผลต่างๆ เช่น IP ซ้ำหรือไม่? , DM เคยมีอยู่แล้วหรือเปล่า?
+                $ip_duplicates = array();
+                // $ip_repeat_results = $db->tb_scada_host_info()->where("ip = ? and status = 1 and ip_host_name != '10.50.130.247_DM-01-01-04-01'", $tmpIP);
+                $ip_duplicate_results = $db->tb_scada_host_info()->where("ip = ? and status = 1 and ip_host_name != ?", $tmpIP, $tmpIP."_".$tmpDmCode);
+                // $ip_repeat_results = $db->tb_scada_host_info()->where("ip = ? and status = 1", $tmpIP);
+                foreach ($ip_duplicate_results as $ip_duplicate_result) {
+                  $ip_duplicates[] = array(
+                    "message" => "IP ซ้ำกับ ".$ip_duplicate_result["host_name"]." (id : ".$ip_duplicate_result["id"].")"
+                  );
+                }
+               /*  Check DM Duplicate (tb_scada_host_info) Partial */
+                               // Check DM Duplicate???
+                $dm_duplicates = array();
+                $dm_duplicate_results = $db->tb_scada_host_info()->where("host_name = ? and status = 1 and ip_host_name != ?", $tmpDmCode, $tmpIP."_".$tmpDmCode);
+                foreach ($dm_duplicate_results as $dm_duplicate_result) {
+                  $dm_duplicates[] = array(
+                    "message" => "DM ซ้ำกับ ".$dm_duplicate_result["host_name"]." (id : ".$dm_duplicate_result["id"].")"
+                  );
+                }
+               
+               /*  Insert/Update Records (tb_main01_user_rtu_info) Partial */
+               
+    // Insert or Update User Records
+    $insertUpdateUser_result = $db->tb_main01_user_rtu_info()->insert_update(
+                array("meter_code" => $tmpDmCode), // unique key
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus)// update values otherwise
+    );
+               /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
+               
+    // Insert or Update SCADA Records
+    $insertUpdateScada_result = $db->tb_main02_scada_rtu_info()->insert_update(
+                array("meter_code" => $tmpDmCode), // unique key
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus)// update values otherwise
+    );
+
+
+
+
+                $resons[] = array(
+                    "ip_duplicate" => $ip_duplicates,
+                    "dm_duplicate" => $dm_duplicates
+                );
+
+
+               // $reports[] = array(
+               //    "branch_code" => $tmpBranchCode,
+               //    "zone_code" => $tmpZoneCode,
+               //    "dma_code" => $tmpDmaCode,
+               //    "dm_code" => $tmpDmCode, 
+               //    "ip" => $tmpIP,
+               //    "logger_code" => $tmpLoggerCode,
+               //    "comm" => $tmpComm,
+               //    "rtu_status" => $tmpRtuStatus,
+               //    "result" => $result_updateScadaInfo,
+               //    "result_query" => $tb_scada_host_info_result
+               //  );
 
                $reports[] = array(
-                  "branch_code" => $tmpBranchCode,
-                  "zone_code" => $tmpZoneCode,
-                  "dma_code" => $tmpDmaCode,
-                  "dm_code" => $tmpDmCode, 
+                  "dm_code" => $tmpDmCode,
                   "ip" => $tmpIP,
-                  "logger_code" => $tmpLoggerCode,
-                  "rtu_status" => $tmpRtuStatus
+                  "check_with_existing_result" => $resons
                 );
+
+
+
           }
 
 
