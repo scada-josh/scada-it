@@ -1,16 +1,16 @@
 
 	/**
 	 *
-	 * @apiName AddNewRtuInfoManager
+	 * @apiName AddWlmaInfoManager
 	 * @apiGroup Admin
 	 * @apiVersion 0.1.0
 	 *
-	 * @api {post} /AdminAPI/addNewRtuInfoManager/ AddNewRtuInfoManager
-	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_scada_station_df, tb_main01_user_rtu_info, tb_main02_scada_rtu_info
+	 * @api {post} /AdminAPI/addWlmaInfoManager/ AddWlmaInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบใน tb_main03_wlma_rtu_info
 	 *
 	 *
 	 */
-    function addNewRtuInfoManager($app, $pdo, $db) {
+    function addWlmaInfoManager($app, $pdo, $db) {
 
 
         /* ************************* */
@@ -60,52 +60,19 @@
                $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
                
 
-               /*  Update Existing Records (tb_scada_host_info) Partial */
-               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_updateStatusExistingRecords" %>
-               /*  Insert/Update Records (tb_scada_host_info) Partial */
-               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_insertUpdateHostTableRecords" %>
-               /*  Check IP Address Duplicate (tb_scada_host_info) Partial */
-               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_checkIpAddressDuplicate" %>
-               /*  Check DM Duplicate (tb_scada_host_info) Partial */
-               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_checkDmAddressDuplicate" %>
-               
-               /*  Insert/Update Records (tb_main01_user_rtu_info) Partial */
-               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_insertUpdateUserTableRecords" %>
                /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
-               <%= partial "/Admin/addNewRtuInfoManager_partials/_addNewRtuInfoManager_insertUpdateScadaTableRecords" %>
+               <%= partial "/Admin/WLMA_Info_Manager/_addNewRtuInfoManager_insertUpdateWlmaTableRecords" %>
 
 
-
-
-                $resons[] = array(
-                    "ip_duplicate" => $ip_duplicates,
-                    "dm_duplicate" => $dm_duplicates
-                );
-
-
-               // $reports[] = array(
-               //    "branch_code" => $tmpBranchCode,
-               //    "zone_code" => $tmpZoneCode,
-               //    "dma_code" => $tmpDmaCode,
-               //    "dm_code" => $tmpDmCode, 
-               //    "ip" => $tmpIP,
-               //    "logger_code" => $tmpLoggerCode,
-               //    "comm" => $tmpComm,
-               //    "rtu_status" => $tmpRtuStatus,
-               //    "result" => $result_updateScadaInfo,
-               //    "result_query" => $tb_scada_host_info_result
-               //  );
 
                $reports[] = array(
                   "dm_code" => $tmpDmCode,
-                  "ip" => $tmpIP,
-                  "check_with_existing_result" => $resons
+                  "ip" => $tmpIP
                 );
 
 
 
           }
-
 
 
          /* ************************* */
@@ -122,6 +89,5 @@
          // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
          // echo json_encode($return_m);
 
-
-
     }
+

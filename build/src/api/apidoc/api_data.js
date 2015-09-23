@@ -1,17 +1,49 @@
 define({ "api": [
   {
-    "name": "AddNewRtuInfoManager",
+    "name": "AddScadaInfoManager",
     "group": "Admin",
     "version": "0.1.0",
     "type": "post",
-    "url": "/AdminAPI/addNewRtuInfoManager/",
-    "title": "AddNewRtuInfoManager",
-    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_scada_station_df, tb_main01_user_rtu_info, tb_main02_scada_rtu_info</p> ",
+    "url": "/AdminAPI/addScadaInfoManager/",
+    "title": "AddScadaInfoManager",
+    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_station_df</p> ",
     "filename": "./index.php",
     "groupTitle": "Admin",
     "sampleRequest": [
       {
-        "url": "http://localhost/scada-it/build/src/api/AdminAPI/addNewRtuInfoManager/"
+        "url": "http://localhost/scada-it/build/src/api/AdminAPI/addScadaInfoManager/"
+      }
+    ]
+  },
+  {
+    "name": "AddUserInfoManager",
+    "group": "Admin",
+    "version": "0.1.0",
+    "type": "post",
+    "url": "/AdminAPI/addUserInfoManager/",
+    "title": "AddUserInfoManager",
+    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_main01_user_rtu_info</p> ",
+    "filename": "./index.php",
+    "groupTitle": "Admin",
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api/AdminAPI/addUserInfoManager/"
+      }
+    ]
+  },
+  {
+    "name": "AddWlmaInfoManager",
+    "group": "Admin",
+    "version": "0.1.0",
+    "type": "post",
+    "url": "/AdminAPI/addWlmaInfoManager/",
+    "title": "AddWlmaInfoManager",
+    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบใน tb_main03_wlma_rtu_info</p> ",
+    "filename": "./index.php",
+    "groupTitle": "Admin",
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api/AdminAPI/addWlmaInfoManager/"
       }
     ]
   },
@@ -785,6 +817,34 @@ define({ "api": [
     },
     "filename": "./index.php",
     "groupTitle": "TEST_SERVICE"
+  },
+  {
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api, iOS RESTKit use content-type is \"application/json\"\nWeb Form, Advance REST Client App use content-type is \"application/x-www-form-urlencoded\""
+      }
+    ],
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./index.php",
+    "group": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "groupTitle": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "name": ""
+  },
+  {
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api, iOS RESTKit use content-type is \"application/json\"\nWeb Form, Advance REST Client App use content-type is \"application/x-www-form-urlencoded\""
+      }
+    ],
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./index.php",
+    "group": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "groupTitle": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "name": ""
   },
   {
     "sampleRequest": [

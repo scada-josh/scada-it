@@ -1,0 +1,93 @@
+
+	/**
+	 *
+	 * @apiName AddScadaInfoManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/addScadaInfoManager/ AddScadaInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_station_df
+	 *
+	 *
+	 */
+    function addScadaInfoManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             $paramListRTU = $result->listRTU;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+
+
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+
+          $reports = array();
+          $numDM = count($paramListRTU);  // จำนวน DM
+          
+
+          for ($i=0; $i < $numDM; $i++) { 
+
+               $tmpBranchCode = $paramListRTU[$i]->branch_code;
+               $tmpZoneCode = $paramListRTU[$i]->zone_code;
+               $tmpDmaCode = $paramListRTU[$i]->dma_code;
+               $tmpDmCode = $paramListRTU[$i]->dm_code;
+               $tmpIP = $paramListRTU[$i]->ip;
+               $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+               $tmpComm = $paramListRTU[$i]->comm;
+               $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
+               
+
+               /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
+               <%= partial "/Admin/SCADA_Info_Manager/_addNewRtuInfoManager_insertUpdateScadaTableRecords" %>
+
+
+
+               $reports[] = array(
+                  "dm_code" => $tmpDmCode,
+                  "ip" => $tmpIP
+                );
+
+
+
+          }
+
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+         $resultText = "success";
+
+         $reportResult = array("result" =>  $resultText,
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+    }
+

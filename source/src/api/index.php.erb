@@ -62,8 +62,14 @@ layout: "layout-blank"
     $app->post('/AdminAPI/compareWithExistingRtuManager/',function() use ($app, $pdo, $db) { 
         compareWithExistingRtuManager($app, $pdo, $db); 
     });
-    $app->post('/AdminAPI/addNewRtuInfoManager/',function() use ($app, $pdo, $db) { 
-        addNewRtuInfoManager($app, $pdo, $db); 
+    $app->post('/AdminAPI/addUserInfoManager/',function() use ($app, $pdo, $db) { 
+        addUserInfoManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/addScadaInfoManager/',function() use ($app, $pdo, $db) { 
+        addScadaInfoManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/addWlmaInfoManager/',function() use ($app, $pdo, $db) { 
+        addWlmaInfoManager($app, $pdo, $db); 
     });
 
 
@@ -81,6 +87,8 @@ layout: "layout-blank"
     <%= partial "/Admin/_updateInsertAllRtuManager" %>
     <%= partial "/Admin/_updateOnOffScanScadaInfoManager" %>
     <%= partial "/Admin/_compareWithExistingRtuManager" %>
-    <%= partial "/Admin/_addNewRtuInfoManager" %>
+    <%= partial "/Admin/_addUserInfoManager" %>
+    <%= partial "/Admin/_addScadaInfoManager" %>
+    <%= partial "/Admin/_addWlmaInfoManager" %>
 
 ?>

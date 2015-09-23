@@ -143,8 +143,14 @@
     $app->post('/AdminAPI/compareWithExistingRtuManager/',function() use ($app, $pdo, $db) { 
         compareWithExistingRtuManager($app, $pdo, $db); 
     });
-    $app->post('/AdminAPI/addNewRtuInfoManager/',function() use ($app, $pdo, $db) { 
-        addNewRtuInfoManager($app, $pdo, $db); 
+    $app->post('/AdminAPI/addUserInfoManager/',function() use ($app, $pdo, $db) { 
+        addUserInfoManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/addScadaInfoManager/',function() use ($app, $pdo, $db) { 
+        addScadaInfoManager($app, $pdo, $db); 
+    });
+    $app->post('/AdminAPI/addWlmaInfoManager/',function() use ($app, $pdo, $db) { 
+        addWlmaInfoManager($app, $pdo, $db); 
     });
 
 
@@ -5157,16 +5163,16 @@
     
 	/**
 	 *
-	 * @apiName AddNewRtuInfoManager
+	 * @apiName AddUserInfoManager
 	 * @apiGroup Admin
 	 * @apiVersion 0.1.0
 	 *
-	 * @api {post} /AdminAPI/addNewRtuInfoManager/ AddNewRtuInfoManager
-	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_scada_station_df, tb_main01_user_rtu_info, tb_main02_scada_rtu_info
+	 * @api {post} /AdminAPI/addUserInfoManager/ AddUserInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_host_info, tb_main01_user_rtu_info
 	 *
 	 *
 	 */
-    function addNewRtuInfoManager($app, $pdo, $db) {
+    function addUserInfoManager($app, $pdo, $db) {
 
 
         /* ************************* */
@@ -5299,22 +5305,6 @@
                       "comm" => $tmpComm,
                       "rtu_status" => $tmpRtuStatus)// update values otherwise
     );
-               /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
-               
-    // Insert or Update SCADA Records
-    $insertUpdateScada_result = $db->tb_main02_scada_rtu_info()->insert_update(
-                array("meter_code" => $tmpDmCode), // unique key
-                array("logger_code"  => $tmpLoggerCode,
-                      "ip_address" => $tmpIP,
-                      "comm" => $tmpComm,
-                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
-                array("logger_code"  => $tmpLoggerCode,
-                      "ip_address" => $tmpIP,
-                      "comm" => $tmpComm,
-                      "rtu_status" => $tmpRtuStatus)// update values otherwise
-    );
-
-
 
 
                 $resons[] = array(
@@ -5322,19 +5312,6 @@
                     "dm_duplicate" => $dm_duplicates
                 );
 
-
-               // $reports[] = array(
-               //    "branch_code" => $tmpBranchCode,
-               //    "zone_code" => $tmpZoneCode,
-               //    "dma_code" => $tmpDmaCode,
-               //    "dm_code" => $tmpDmCode, 
-               //    "ip" => $tmpIP,
-               //    "logger_code" => $tmpLoggerCode,
-               //    "comm" => $tmpComm,
-               //    "rtu_status" => $tmpRtuStatus,
-               //    "result" => $result_updateScadaInfo,
-               //    "result_query" => $tb_scada_host_info_result
-               //  );
 
                $reports[] = array(
                   "dm_code" => $tmpDmCode,
@@ -5345,7 +5322,6 @@
 
 
           }
-
 
 
          /* ************************* */
@@ -5365,5 +5341,217 @@
 
 
     }
+    
+	/**
+	 *
+	 * @apiName AddScadaInfoManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/addScadaInfoManager/ AddScadaInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบทั้งใน tb_scada_station_df
+	 *
+	 *
+	 */
+    function addScadaInfoManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             $paramListRTU = $result->listRTU;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+
+
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+
+          $reports = array();
+          $numDM = count($paramListRTU);  // จำนวน DM
+          
+
+          for ($i=0; $i < $numDM; $i++) { 
+
+               $tmpBranchCode = $paramListRTU[$i]->branch_code;
+               $tmpZoneCode = $paramListRTU[$i]->zone_code;
+               $tmpDmaCode = $paramListRTU[$i]->dma_code;
+               $tmpDmCode = $paramListRTU[$i]->dm_code;
+               $tmpIP = $paramListRTU[$i]->ip;
+               $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+               $tmpComm = $paramListRTU[$i]->comm;
+               $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
+               
+
+               /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
+               
+    // Insert or Update SCADA Records
+    $insertUpdateScada_result = $db->tb_main02_scada_rtu_info()->insert_update(
+                array("meter_code" => $tmpDmCode), // unique key
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus)// update values otherwise
+    );
+
+
+
+               $reports[] = array(
+                  "dm_code" => $tmpDmCode,
+                  "ip" => $tmpIP
+                );
+
+
+
+          }
+
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+         $resultText = "success";
+
+         $reportResult = array("result" =>  $resultText,
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+    }
+
+
+    
+	/**
+	 *
+	 * @apiName AddWlmaInfoManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/addWlmaInfoManager/ AddWlmaInfoManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับข้อมูลใหม่เข้าไปในระบบใน tb_main03_wlma_rtu_info
+	 *
+	 *
+	 */
+    function addWlmaInfoManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             $paramListRTU = $result->listRTU;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+
+
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+
+          $reports = array();
+          $numDM = count($paramListRTU);  // จำนวน DM
+          
+
+          for ($i=0; $i < $numDM; $i++) { 
+
+               $tmpBranchCode = $paramListRTU[$i]->branch_code;
+               $tmpZoneCode = $paramListRTU[$i]->zone_code;
+               $tmpDmaCode = $paramListRTU[$i]->dma_code;
+               $tmpDmCode = $paramListRTU[$i]->dm_code;
+               $tmpIP = $paramListRTU[$i]->ip;
+               $tmpLoggerCode = $paramListRTU[$i]->logger_code;
+               $tmpComm = $paramListRTU[$i]->comm;
+               $tmpRtuStatus = $paramListRTU[$i]->rtu_status;
+               
+
+               /*  Insert/Update Records (tb_main02_scada_rtu_info) Partial */
+               
+    // Insert or Update SCADA Records
+    $insertUpdateWlma_result = $db->tb_main03_wlma_rtu_info()->insert_update(
+                array("meter_code" => $tmpDmCode), // unique key
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus)// update values otherwise
+    );
+
+
+
+               $reports[] = array(
+                  "dm_code" => $tmpDmCode,
+                  "ip" => $tmpIP
+                );
+
+
+
+          }
+
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+         $resultText = "success";
+
+         $reportResult = array("result" =>  $resultText,
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+    }
+
+
 
 ?>

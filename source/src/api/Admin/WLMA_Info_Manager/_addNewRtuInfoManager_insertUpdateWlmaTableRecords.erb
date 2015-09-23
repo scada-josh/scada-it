@@ -1,0 +1,13 @@
+
+    // Insert or Update SCADA Records
+    $insertUpdateWlma_result = $db->tb_main03_wlma_rtu_info()->insert_update(
+                array("meter_code" => $tmpDmCode), // unique key
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus), // insert values if the row doesn't exist
+                array("logger_code"  => $tmpLoggerCode,
+                      "ip_address" => $tmpIP,
+                      "comm" => $tmpComm,
+                      "rtu_status" => $tmpRtuStatus)// update values otherwise
+    );
