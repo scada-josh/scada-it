@@ -152,6 +152,9 @@
     $app->post('/AdminAPI/addWlmaInfoManager/',function() use ($app, $pdo, $db) { 
         addWlmaInfoManager($app, $pdo, $db); 
     });
+    $app->post('/AdminAPI/createHostFileManager/',function() use ($app, $pdo, $db) { 
+        createHostFileManager($app, $pdo, $db); 
+    });
 
 
 	$app->run();
@@ -5535,6 +5538,144 @@
 
           }
 
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+         $resultText = "success";
+
+         $reportResult = array("result" =>  $resultText,
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+    }
+
+
+    
+	/**
+	 *
+	 * @apiName CreateHostFileManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/createHostFileManager/ CreateHostFileManager
+	 * @apiDescription คำอธิบาย : ในส่วนนี้ใช้สำหรับสร้าง Host File
+	 *
+	 *
+	 */
+    function createHostFileManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             // $paramListRTU = $result->listRTU;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+          $reports = array();
+
+          $date = new DateTime();
+          $fileName = 'HostFile'.'_'.date("Y-m-d").'_'.$date->getTimestamp().'.txt';
+          $filePath = '../../files/'.$fileName;
+          $myHostfile = fopen($filePath, "w") or die("Unable to open file!");
+           
+          $txtRecord = "# Copyright (c) 1993-2009 Microsoft Corp.\n";
+          $txtRecord .= "#\n";
+          $txtRecord .= "# This is a sample HOSTS file used by Microsoft TCP/IP for Windows. \n";
+          $txtRecord .= "#\n";
+          $txtRecord .= "# This file contains the mappings of IP addresses to host names. Each\n";
+          $txtRecord .= "# entry should be kept on an individual line. The IP address should\n";
+          $txtRecord .= "# be placed in the first column followed by the corresponding host name.  \n";
+          $txtRecord .= "# The IP address and the host name should be separated by at least one\n";
+          $txtRecord .= "# space. \n";
+          $txtRecord .= "#\n";
+          $txtRecord .= "# Additionally, comments (such as these) may be inserted on individual \n";
+          $txtRecord .= "# lines or following the machine name denoted by a '#' symbol.\n";
+          $txtRecord .= "#\n";
+          $txtRecord .= "# For example:  \n";
+          $txtRecord .= "#\n";
+          $txtRecord .= "# 102.54.94.97     rhino.acme.com          # source server \n";
+          $txtRecord .= "# 38.25.63.10     x.acme.com              # x client host \n";
+          $txtRecord .= "\n";
+          $txtRecord .= "# localhost name resolution is handled within DNS itself.  \n";
+          $txtRecord .= "# 127.0.0.1       localhost \n";
+          $txtRecord .= "# ::1             localhost \n";
+          $txtRecord .= "\n";
+          $txtRecord .= "\n";
+          $txtRecord .= "#--Below Host Name were added ------\n";
+          $txtRecord .= "\n";
+          fwrite($myHostfile, $txtRecord);
+
+
+          $txtRecord = "# For SCADA System\n";
+          fwrite($myHostfile, $txtRecord);
+
+          $host_info_results = $db->tb_scada_host_info()->where("sections = '# For SCADA System' and status = 1")->order("host_name ASC");
+          foreach ($host_info_results as $host_info_result) {
+
+            $txtRecord = $host_info_result['ip']."\t".$host_info_result['host_name']."\t".$host_info_result['comments']."\n";
+            fwrite($myHostfile, $txtRecord);
+          }
+
+
+          $txtRecord = "\n";
+          $txtRecord .= "# For WLMS PGIM each Branch\n";
+          fwrite($myHostfile, $txtRecord);
+
+          $host_info_results = $db->tb_scada_host_info()->where("sections = '# For WLMS PGIM each Branch' and status = 1")->order("host_name ASC");
+          foreach ($host_info_results as $host_info_result) {
+
+            $txtRecord = $host_info_result['ip']."\t".$host_info_result['host_name']."\t".$host_info_result['comments']."\n";
+            fwrite($myHostfile, $txtRecord);
+          }
+
+
+          $txtRecord = "\n";
+          $txtRecord .= "# For RTU\n";
+          fwrite($myHostfile, $txtRecord);
+
+          $host_info_results = $db->tb_scada_host_info()->where("sections = '# For RTU' and status = 1")->order("host_name ASC");
+          foreach ($host_info_results as $host_info_result) {
+
+            $txtRecord = $host_info_result['ip']."\t".$host_info_result['host_name']."\t".$host_info_result['comments']."\n";
+            fwrite($myHostfile, $txtRecord);
+
+
+               $reports[] = array(
+                  "dm" => $host_info_result["host_name"],
+                  "ip" => $host_info_result["ip"]
+                );
+          }
+
+          fclose($myHostfile);
 
          /* ************************* */
          /* เริ่มกระบวนการส่งค่ากลับ */

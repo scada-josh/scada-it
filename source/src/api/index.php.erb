@@ -71,6 +71,9 @@ layout: "layout-blank"
     $app->post('/AdminAPI/addWlmaInfoManager/',function() use ($app, $pdo, $db) { 
         addWlmaInfoManager($app, $pdo, $db); 
     });
+    $app->post('/AdminAPI/createHostFileManager/',function() use ($app, $pdo, $db) { 
+        createHostFileManager($app, $pdo, $db); 
+    });
 
 
 	$app->run();
@@ -90,5 +93,6 @@ layout: "layout-blank"
     <%= partial "/Admin/_addUserInfoManager" %>
     <%= partial "/Admin/_addScadaInfoManager" %>
     <%= partial "/Admin/_addWlmaInfoManager" %>
+    <%= partial "/Admin/_createHostFileManager" %>
 
 ?>

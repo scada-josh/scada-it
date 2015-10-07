@@ -172,6 +172,22 @@ define({ "api": [
     "groupTitle": "Admin"
   },
   {
+    "name": "CreateHostFileManager",
+    "group": "Admin",
+    "version": "0.1.0",
+    "type": "post",
+    "url": "/AdminAPI/createHostFileManager/",
+    "title": "CreateHostFileManager",
+    "description": "<p>คำอธิบาย : ในส่วนนี้ใช้สำหรับสร้าง Host File</p> ",
+    "filename": "./index.php",
+    "groupTitle": "Admin",
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api/AdminAPI/createHostFileManager/"
+      }
+    ]
+  },
+  {
     "name": "UpdateCommentHostFileManager",
     "group": "Admin",
     "version": "0.1.0",
@@ -817,6 +833,20 @@ define({ "api": [
     },
     "filename": "./index.php",
     "groupTitle": "TEST_SERVICE"
+  },
+  {
+    "sampleRequest": [
+      {
+        "url": "http://localhost/scada-it/build/src/api, iOS RESTKit use content-type is \"application/json\"\nWeb Form, Advance REST Client App use content-type is \"application/x-www-form-urlencoded\""
+      }
+    ],
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./index.php",
+    "group": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "groupTitle": "_Applications_XAMPP_xamppfiles_htdocs_scada_it_build_src_api_index_php",
+    "name": ""
   },
   {
     "sampleRequest": [
