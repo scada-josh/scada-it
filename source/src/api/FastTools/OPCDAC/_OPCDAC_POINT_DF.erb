@@ -142,7 +142,8 @@
 							}
 
 						 } else {
-							$value = $results_data_opcdac_point_df[$meta['name']];
+							$tmpValue = $results_data_opcdac_point_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
 						 }
 
 						 //$value = $results_data_opcdac_point_df[$meta['name']];

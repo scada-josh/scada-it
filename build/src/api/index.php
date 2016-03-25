@@ -1827,7 +1827,8 @@
 							}
 							
 						 } else {
-							$value = $results_data_opcdac_group_df[$meta['name']];
+							$tmpValue = $results_data_opcdac_group_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
 						 }
 
 						 //$value = $results_data_opcdac_group_df[$meta['name']];
@@ -2114,7 +2115,8 @@
 							}
 
 						 } else {
-							$value = $results_data_opcdac_point_df[$meta['name']];
+							$tmpValue = $results_data_opcdac_point_df[$meta['name']];
+							$value = trim(preg_replace('/\t+/', '', $tmpValue));
 						 }
 
 						 //$value = $results_data_opcdac_point_df[$meta['name']];
@@ -4724,7 +4726,9 @@
 
 			if (substr($scada_host_info_result["host_name"],0,2) == "DM") {
 				$tmpBranchName = "B".substr($scada_host_info_result["host_name"],3,2);
-				$tmpComment = "#".$tmpBranchName."	".$rtu_general_info_result["BRAND"]."	".$scada_rtu_info_result["logger_code"]."	".$scada_rtu_info_result["comm"];
+				//$tmpComment = "#".$tmpBranchName."	".$rtu_general_info_result["BRAND"]."	".$scada_rtu_info_result["logger_code"]."	".$scada_rtu_info_result["comm"];
+				$tmpComment = "#".$tmpBranchName."\t".$rtu_general_info_result["BRAND"]."\t".$scada_rtu_info_result["logger_code"]."\t".$scada_rtu_info_result["comm"];
+
 			} else {
 				$tmpBranchName = "";
 				$tmpComment = "";
