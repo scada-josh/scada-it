@@ -74,6 +74,9 @@ layout: "layout-blank"
     $app->post('/AdminAPI/createHostFileManager/',function() use ($app, $pdo, $db) { 
         createHostFileManager($app, $pdo, $db); 
     });
+    $app->post('/AdminAPI/checkExistingRtuManager/',function() use ($app, $pdo, $db) { 
+        checkExistingRtuManager($app, $pdo, $db); 
+    });
 
 
 	$app->run();
@@ -94,5 +97,6 @@ layout: "layout-blank"
     <%= partial "/Admin/_addScadaInfoManager" %>
     <%= partial "/Admin/_addWlmaInfoManager" %>
     <%= partial "/Admin/_createHostFileManager" %>
+    <%= partial "/Admin/_checkExistingRtuManager" %>
 
 ?>

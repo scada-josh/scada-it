@@ -155,6 +155,9 @@
     $app->post('/AdminAPI/createHostFileManager/',function() use ($app, $pdo, $db) { 
         createHostFileManager($app, $pdo, $db); 
     });
+    $app->post('/AdminAPI/checkExistingRtuManager/',function() use ($app, $pdo, $db) { 
+        checkExistingRtuManager($app, $pdo, $db); 
+    });
 
 
 	$app->run();
@@ -229,7 +232,7 @@
         * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
         * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
         */
-        if ($ContetnType == "application/json") {
+        if (($ContetnType == "application/json") || ($ContetnType == "application/json; charset=utf-8")) {
 
 	        $request = $app->request();
 	        $result = json_decode($request->getBody());
@@ -5697,6 +5700,118 @@
 
     }
 
+
+    	/**
+	 *
+	 * @apiName CheckExistingRtuManager
+	 * @apiGroup Admin
+	 * @apiVersion 0.1.0
+	 *
+	 * @api {post} /AdminAPI/checkExistingRtuManager/ Check Existing RTU Manager
+	 * @apiDescription คำอธิบาย : ส่วนนี้ใช้ในการตรวจสอบการ Config. RTU ที่มีอยู่ในฐานข้อมูล
+	 *
+	 *
+	 *
+	 * @apiSampleRequest /AdminAPI/checkExistingRtuManager/
+	 *
+	 * @apiSuccess {String} msg แสดงข้อความทักทายผู้ใช้งาน
+	 *
+	 * @apiSuccessExample Example data on success:
+	 * {
+     *   "msg": "Hello, Current PHP version: 5.6.8"
+	 * }
+	 *
+	 * @apiError UserNotFound The <code>id</code> of the User was not found.
+	 * @apiErrorExample {json} Error-Response:
+	 *     HTTP/1.1 404 Not Found
+	 *     {
+	 *       "error": "UserNotFound"
+	 *     }
+	 *
+	 */
+	 function checkExistingRtuManager($app, $pdo, $db) {
+
+
+        /* ************************* */
+        /* เริ่มกระบวนการรับค่าพารามิเตอร์จากส่วนของ Payload ซึ่งอยู่ในรูปแบบ JSON */
+        /* ************************* */
+        $headers = $app->request->headers;
+        $ContetnType = $app->request->headers->get('Content-Type');
+
+        /**
+        * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
+        * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
+        */
+        if ($ContetnType == "application/json") {
+
+             $request = $app->request();
+             $result = json_decode($request->getBody());
+
+             /* receive request */
+             $paramListDM = $result->listDM;
+
+ 
+          } else if ($ContetnType == "application/x-www-form-urlencoded"){
+
+              //$userID = $app->request()->params('userID_param');
+              //$userID = $app->request()->post('userID_param');
+          }
+
+
+          /* ************************* */
+          /* เริ่มกระบวนการเชื่อมต่อกับฐานข้อมูล MySQL */
+          /* ************************* */
+          $reports = array();
+
+          $date = new DateTime();
+          $fileName = 'ExistingRTU'.'_'.date("Y-m-d").'_'.$date->getTimestamp().'.txt';
+          $filePath = '../../files/'.$fileName;
+          $myExistingRTU = fopen($filePath, "w") or die("Unable to open file!");
+
+
+
+          $numDM = count($paramListDM);  // จำนวน DM
+
+          for ($i=0; $i < $numDM; $i++) { 
+
+          		$tmpDM = $paramListDM[$i]->name;
+
+          		//$scada_info_results = $db->tb_main02_scada_rtu_info()->where("meter_code = '".$tmpDM."' and rtu_status = 1")->fetch();
+          		$scada_info_results = $db->tb_main02_scada_rtu_info()->where("meter_code = '".$tmpDM."'")->fetch();
+
+				$reports[] = array(
+                  "dm" => $tmpDM,
+                  "logger_code" => $scada_info_results["logger_code"],
+                  "ip" => $scada_info_results["ip_address"]
+                );
+
+                $txtExistingRTU = $tmpDM."\t".$scada_info_results["ip_address"]."\t".$scada_info_results["logger_code"]."\n";
+            	fwrite($myExistingRTU, $txtExistingRTU);
+
+          }
+
+          fclose($myExistingRTU);
+
+         /* ************************* */
+         /* เริ่มกระบวนการส่งค่ากลับ */
+         /* ************************* */
+
+         $resultText = "success";
+
+         $reportResult = array("result" =>  $resultText,
+         						"filename" => $fileName,
+         						"path" => url()."/scada-it/build/files/".$fileName,
+                                   "rows" => $reports);
+
+         $app->response()->header("Content-Type", "application/json");
+         echo json_encode($reportResult);
+
+         // $return_m = array("msg" => "Hello, Current PHP version: ". phpversion());
+         // echo json_encode($return_m);
+
+
+
+    }
 
 
 ?>
