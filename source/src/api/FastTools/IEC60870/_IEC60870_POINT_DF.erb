@@ -1,9 +1,9 @@
 		$sheetCount = $objPHPExcel->getSheetCount();
 
 		/* Create Worksheet พร้อมกำหนดชื่อ */
-		$objPHPExcel_IEC60870_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC60870_POINT_DF');
+		$objPHPExcel_IEC60870_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC104_POINT_DF');
 		$objPHPExcel->addSheet($objPHPExcel_IEC60870_POINT_DF_Worksheet, $sheetCount);
-		$objPHPExcel_IEC60870_POINT_DF_Worksheet->setTitle('IEC60870_POINT_DF');
+		$objPHPExcel_IEC60870_POINT_DF_Worksheet->setTitle('IEC104_POINT_DF');
 
 		/* กำหนดให้เป็น ActiveWorkSheet */
 		// Set active sheet index to the first sheet, so Excel opens this as the first sheet

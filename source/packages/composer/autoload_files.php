@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
-    $vendorDir . '/vrana/notorm/NotORM.php',
-    $vendorDir . '/arcanedev/qr-code/src/helpers.php',
+    '17fd9fef37c97cfdc0c7794299a8423d' => $vendorDir . '/vrana/notorm/NotORM.php',
+    '7fdad27ad584a05fb8da81178cdd742b' => $vendorDir . '/arcanedev/qr-code/src/helpers.php',
 );

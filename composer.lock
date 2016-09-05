@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1806606e65b301b65b5820a608ae31e7",
+    "hash": "d1a082e4d2f65ad50d1b42b43d7db129",
+    "content-hash": "bd0693b4317845920168f268079f27ae",
     "packages": [
         {
             "name": "arcanedev/qr-code",
@@ -64,12 +65,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "6495567afe1486353bec82d6b2de6f98553d60a5"
+                "reference": "c08a459521496f2925c3dcb186a910f5b8d7e336"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/6495567afe1486353bec82d6b2de6f98553d60a5",
-                "reference": "6495567afe1486353bec82d6b2de6f98553d60a5",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/c08a459521496f2925c3dcb186a910f5b8d7e336",
+                "reference": "c08a459521496f2925c3dcb186a910f5b8d7e336",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +111,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2015-06-18 09:43:23"
+            "time": "2016-08-30 10:53:16"
         },
         {
             "name": "phpoffice/phpexcel",
@@ -269,17 +270,17 @@
             "time": "2014-12-09 23:48:51"
         },
         {
-            "name": "tecnick.com/tcpdf",
+            "name": "tecnickcom/tcpdf",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tecnickcom/TCPDF.git",
-                "reference": "fa6ab8a1e1fbabb9e6cfd2f807514fa1497240e4"
+                "reference": "009f2304c3a9c8152b89a5321a8825f250911dc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/354433a33946ae7497c3eab291eaaf814bccbfab",
-                "reference": "fa6ab8a1e1fbabb9e6cfd2f807514fa1497240e4",
+                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/009f2304c3a9c8152b89a5321a8825f250911dc3",
+                "reference": "009f2304c3a9c8152b89a5321a8825f250911dc3",
                 "shasum": ""
             },
             "require": {
@@ -329,29 +330,33 @@
                 "pdf417",
                 "qrcode"
             ],
-            "time": "2015-06-18 09:12:38"
+            "time": "2016-06-10 17:46:02"
         },
         {
             "name": "twig/twig",
-            "version": "v1.19.0",
+            "version": "v1.24.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "edbeaf43b0a606cdaadc32a11d2673614a377b90"
+                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/edbeaf43b0a606cdaadc32a11d2673614a377b90",
-                "reference": "edbeaf43b0a606cdaadc32a11d2673614a377b90",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
+                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.7"
             },
+            "require-dev": {
+                "symfony/debug": "~2.7",
+                "symfony/phpunit-bridge": "~2.7"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.19-dev"
+                    "dev-master": "1.24-dev"
                 }
             },
             "autoload": {
@@ -386,7 +391,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-07-31 13:45:26"
+            "time": "2016-09-01 17:50:53"
         },
         {
             "name": "vrana/notorm",
@@ -435,7 +440,7 @@
         "vrana/notorm": 20,
         "mobiledetect/mobiledetectlib": 20,
         "arcanedev/qr-code": 20,
-        "tecnick.com/tcpdf": 20,
+        "tecnickcom/tcpdf": 20,
         "phpoffice/phpexcel": 20
     },
     "prefer-stable": false,

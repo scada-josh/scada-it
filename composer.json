@@ -4,7 +4,7 @@
         "vrana/notorm": "dev-master",
         "mobiledetect/mobiledetectlib": "dev-master",
         "arcanedev/qr-code": "dev-master",
-        "tecnick.com/tcpdf": "dev-master",
+        "tecnickcom/tcpdf": "dev-master", 
         "phpoffice/phpexcel": "dev-master",
         "slim/views": "^0.1.3",
         "twig/twig": "^1.19"

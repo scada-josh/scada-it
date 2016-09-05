@@ -3251,7 +3251,7 @@
         * apidoc @apiSampleRequest, iOS RESTKit use content-type is "application/json"
         * Web Form, Advance REST Client App use content-type is "application/x-www-form-urlencoded"
         */
-        if ($ContetnType == "application/json") {
+        if (($ContetnType == "application/json") || ($ContetnType == "application/json; charset=utf-8")) {
 
 	        $request = $app->request();
 	        $result = json_decode($request->getBody());
@@ -3345,7 +3345,7 @@
 
 		/* Set Title */
 		// Rename worksheet
-		$objPHPExcel->getActiveSheet()->setTitle('IEC60870_LINE_DF');
+		$objPHPExcel->getActiveSheet()->setTitle('IEC104_LINE_DF');
 
 		
 
@@ -3353,9 +3353,9 @@
 	    		$sheetCount = $objPHPExcel->getSheetCount();
 
 		/* Create Worksheet พร้อมกำหนดชื่อ */
-		$objPHPExcel_IEC60870_STATION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC60870_STATION_DF');
+		$objPHPExcel_IEC60870_STATION_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC104_STATION_DF');
 		$objPHPExcel->addSheet($objPHPExcel_IEC60870_STATION_DF_Worksheet, $sheetCount);
-		$objPHPExcel_IEC60870_STATION_DF_Worksheet->setTitle('IEC60870_STATION_DF');
+		$objPHPExcel_IEC60870_STATION_DF_Worksheet->setTitle('IEC104_STATION_DF');
 
 		/* กำหนดให้เป็น ActiveWorkSheet */
 		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
@@ -3451,9 +3451,9 @@
 	    		$sheetCount = $objPHPExcel->getSheetCount();
 
 		/* Create Worksheet พร้อมกำหนดชื่อ */
-		$objPHPExcel_IEC60870_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC60870_POINT_DF');
+		$objPHPExcel_IEC60870_POINT_DF_Worksheet = new \PHPExcel_Worksheet($objPHPExcel, 'IEC104_POINT_DF');
 		$objPHPExcel->addSheet($objPHPExcel_IEC60870_POINT_DF_Worksheet, $sheetCount);
-		$objPHPExcel_IEC60870_POINT_DF_Worksheet->setTitle('IEC60870_POINT_DF');
+		$objPHPExcel_IEC60870_POINT_DF_Worksheet->setTitle('IEC104_POINT_DF');
 
 		/* กำหนดให้เป็น ActiveWorkSheet */
 		// Set active sheet index to the first sheet, so Excel opens this as the first sheet
